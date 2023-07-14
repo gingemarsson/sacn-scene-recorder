@@ -5,16 +5,18 @@ export type ReceiverConfiguration = {
     appName: string;
 };
 
+export type UniverseData = Record<
+    number,
+    {
+        dmx: DmxUniverseData;
+        priority: number;
+        lastReceived: number;
+        sender?: string | undefined;
+    }
+>;
+
 export type ReceiverData = {
-    universeData: Record<
-        number,
-        {
-            dmx: DmxUniverseData;
-            priority: number;
-            lastReceived: number;
-            sender?: string | undefined;
-        }
-    >;
+    universeData: UniverseData;
     configuration: ReceiverConfiguration;
 };
 

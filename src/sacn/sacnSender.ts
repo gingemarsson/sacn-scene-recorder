@@ -1,5 +1,5 @@
-import { Receiver, Sender } from 'sacn';
-import { ReceiverConfiguration, ReceiverData, SenderConfiguration } from './models';
+import { Sender } from 'sacn';
+import { SenderConfiguration } from '../models';
 import { listToMap } from './utils';
 
 // Config
