@@ -1,6 +1,7 @@
 import express from 'express';
 import next from 'next';
 import { StateService } from './business-logic/stateService';
+import { configureWebsockets } from './business-logic/websockets';
 import { ReceiverConfiguration, SenderConfiguration } from './models';
 import { configureReceiver } from './sacn/sacnReceiver';
 import { configureSender } from './sacn/sacnSender';
@@ -44,4 +45,11 @@ app.prepare().then(() => {
         getDmxDataToSendForUniverse: (universeId: number) => stateService.getDmxDataForUniverse(universeId),
     };
     const senderData = configureSender(senderConfiguration);
+
+    const websocketsData = configureWebsockets();
+
+    // Websocket proof of concept
+    const timer = setInterval(async () => {
+        websocketsData.broadcast(JSON.stringify(stateService.getDmxDataForUniverse(1)), false);
+    }, 1000);
 });
