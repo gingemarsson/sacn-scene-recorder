@@ -1,7 +1,9 @@
 import express from 'express';
 import next from 'next';
+import { Store } from 'redux';
 import { dmxReceived, getLastReceivedDmxDataForUniverse } from './business-logic/redux/currentDmxSlice';
-import { store } from './business-logic/redux/store';
+import { getScenes } from './business-logic/redux/scenesSlice';
+import { observeStore, RootState, store } from './business-logic/redux/store';
 import { configureWebsockets } from './business-logic/websockets';
 import { ReceiverConfiguration, SenderConfiguration } from './models';
 import { configureReceiver } from './sacn/sacnReceiver';
@@ -52,8 +54,11 @@ app.prepare().then(() => {
 
     const websocketsData = configureWebsockets(store);
 
-    // Websocket proof of concept
-    const timer = setInterval(async () => {
-        websocketsData.broadcast(JSON.stringify(getLastReceivedDmxDataForUniverse(store.getState(), 1)), false);
-    }, 1000);
+    observeStore(
+        store,
+        (x) => x.scenes,
+        (sceneData) => {
+            websocketsData.broadcast(JSON.stringify(sceneData), false);
+        },
+    );
 });

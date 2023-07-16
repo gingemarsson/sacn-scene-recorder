@@ -5,8 +5,8 @@ import { webcrypto } from 'crypto';
 
 type SceneData = {
     id: string;
-    created: Date;
-    updated: Date;
+    created: number;
+    updated: number;
     name: string;
     color: string;
     dmxData: Record<number, DmxUniverseData>;
@@ -42,8 +42,8 @@ const scenesSlice = createSlice({
                 id: webcrypto.randomUUID(),
                 name: action.payload.name,
                 color: action.payload.color,
-                created: new Date(),
-                updated: new Date(),
+                created: Date.now(),
+                updated: Date.now(),
                 dmxData: {},
                 enabled: false,
             });
@@ -61,16 +61,16 @@ const scenesSlice = createSlice({
             const newName = action.payload.name?.trim();
             if (newName && newName.length > 0) {
                 scene.name = newName;
-                scene.updated = new Date();
+                scene.updated = Date.now();
             }
 
             const newColor = action.payload.color?.trim();
             if (newColor && newColor.length > 0) {
                 scene.color = newColor;
-                scene.updated = new Date();
+                scene.updated = Date.now();
             }
         },
-        updateSceneWithDmx(state, action: PayloadAction<{ id: string; universes: DmxUniverseState[] }>) {
+        storeDmxToScene(state, action: PayloadAction<{ id: string; dmx: DmxUniverseState[] }>) {
             const scene = state.find((x) => x.id === action.payload.id);
 
             if (!scene) {
@@ -79,13 +79,13 @@ const scenesSlice = createSlice({
 
             scene.dmxData = {};
 
-            action.payload.universes.forEach((universeData) => {
+            action.payload.dmx.forEach((universeData) => {
                 scene.dmxData[universeData.universeId] = universeData.dmx;
             });
 
-            scene.updated = new Date();
+            scene.updated = Date.now();
         },
-        removeDmxFromScene(state, action: PayloadAction<{ id: string; universes: DmxUniverseState[] }>) {
+        removeDmxFromScene(state, action: PayloadAction<{ id: string; dmx: DmxUniverseState[] }>) {
             const scene = state.find((x) => x.id === action.payload.id);
 
             if (!scene) {
@@ -94,7 +94,7 @@ const scenesSlice = createSlice({
 
             scene.dmxData = {};
 
-            action.payload.universes.forEach((universeData) => {
+            action.payload.dmx.forEach((universeData) => {
                 for (const address in universeData.dmx) {
                     const lastReceivedValue = universeData.dmx[address];
                     const storedValue = scene.dmxData[universeData.universeId][address];
@@ -104,14 +104,17 @@ const scenesSlice = createSlice({
                 }
             });
 
-            scene.updated = new Date();
+            scene.updated = Date.now();
         },
     },
 });
 
-export const { enableScene, disableScene, addScene, deleteScene, updateScene } = scenesSlice.actions;
+export const { enableScene, disableScene, addScene, deleteScene, updateScene, storeDmxToScene, removeDmxFromScene } =
+    scenesSlice.actions;
 
 export default scenesSlice.reducer;
+
+export const getScenes = (state: RootState) => state.scenes;
 
 export const getDmxDataToSendForUniverse = (state: RootState, universeId: number) => {
     const enabledScenes = state.scenes.filter((x) => x.enabled);
