@@ -22,3 +22,20 @@ export type SenderConfiguration = {
     priority: number;
     getDmxDataToSendForUniverse: (universe: number) => DmxUniverseData;
 };
+
+export type WebsocketCommand = {
+    type: 'enable' | 'disable' | 'add' | 'update' | 'delete' | 'storeDmx' | 'removeDmx';
+    sceneId?: string;
+    metadata?: { name: string; color: string };
+    universes?: number[];
+};
+
+export type SceneData = {
+    id: string;
+    created: number;
+    updated: number;
+    name: string;
+    color: string;
+    dmxData: Record<number, DmxUniverseData>;
+    enabled: boolean;
+};

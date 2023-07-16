@@ -1,17 +1,7 @@
-import { DmxUniverseData, DmxUniverseState } from '@/models';
+import { DmxUniverseState, SceneData } from '@/models';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from './store';
 import { webcrypto } from 'crypto';
-
-type SceneData = {
-    id: string;
-    created: number;
-    updated: number;
-    name: string;
-    color: string;
-    dmxData: Record<number, DmxUniverseData>;
-    enabled: boolean;
-};
 
 const initialState: SceneData[] = [];
 

@@ -12,6 +12,7 @@ import {
 } from './redux/scenesSlice';
 import { RootState } from './redux/store';
 import { getScenes } from './redux/scenesSlice';
+import {WebsocketCommand} from '../models'
 
 export const configureWebsockets = (store: Store<RootState>) => {
     const wss = new WebSocketServer({ port: 8080 });
@@ -34,13 +35,6 @@ export const configureWebsockets = (store: Store<RootState>) => {
                 }
             }),
     };
-};
-
-type WebsocketCommand = {
-    type: 'enable' | 'disable' | 'add' | 'update' | 'delete' | 'storeDmx' | 'removeDmx';
-    sceneId?: string;
-    metadata?: { name: string; color: string };
-    universes?: number[];
 };
 
 const handleIncomingMessage = (store: Store<RootState>, data: string) => {
@@ -111,7 +105,7 @@ const handleIncomingMessage = (store: Store<RootState>, data: string) => {
             }
 
             const dmxToStore = command.universes.map((universeId) =>
-                getLastReceivedDmxDataForUniverse(store.getState(), universeId),
+                getLastReceivedDmxDataForUniverse(store.getState(), universeId) ?? {},
             );
 
             store.dispatch(storeDmxToScene({ id: command.sceneId, dmx: dmxToStore }));
