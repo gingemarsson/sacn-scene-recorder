@@ -14,6 +14,8 @@ import { RootState } from './redux/store';
 import { getScenes } from './redux/scenesSlice';
 import { WebsocketCommand } from '../models';
 
+const logPrefix = '[WS CMD]';
+
 export const configureWebsockets = (store: Store<RootState>) => {
     const wss = new WebSocketServer({ port: 8080 });
 
@@ -43,12 +45,12 @@ const handleIncomingMessage = (store: Store<RootState>, data: string) => {
     try {
         command = JSON.parse(data);
     } catch (e) {
-        console.log('[WEBSOCKET CMD] Invalid JSON (exception)');
+        console.log(logPrefix, 'Invalid JSON (exception)');
         return;
     }
 
     if (!command) {
-        console.log('[WEBSOCKET CMD] Invalid JSON (undefined)');
+        console.log(logPrefix, 'Invalid JSON (undefined)');
         return;
     }
 
@@ -58,7 +60,7 @@ const handleIncomingMessage = (store: Store<RootState>, data: string) => {
                 break;
             }
             store.dispatch(enableScene(command.sceneId));
-            console.log('[WEBSOCKET CMD] Executed enable');
+            console.log(logPrefix, 'Enable', command.sceneId);
             break;
 
         case 'disable':
@@ -66,7 +68,7 @@ const handleIncomingMessage = (store: Store<RootState>, data: string) => {
                 break;
             }
             store.dispatch(disableScene(command.sceneId));
-            console.log('[WEBSOCKET CMD] Executed disable');
+            console.log(logPrefix, 'Disable', command.sceneId);
             break;
 
         case 'add':
@@ -74,7 +76,7 @@ const handleIncomingMessage = (store: Store<RootState>, data: string) => {
                 break;
             }
             store.dispatch(addScene(command.metadata));
-            console.log('[WEBSOCKET CMD] Executed add');
+            console.log(logPrefix, 'Add');
             break;
 
         case 'delete':
@@ -82,7 +84,7 @@ const handleIncomingMessage = (store: Store<RootState>, data: string) => {
                 break;
             }
             store.dispatch(deleteScene(command.sceneId));
-            console.log('[WEBSOCKET CMD] Executed delete');
+            console.log(logPrefix, 'Delete', command.sceneId);
             break;
 
         case 'update':
@@ -93,7 +95,7 @@ const handleIncomingMessage = (store: Store<RootState>, data: string) => {
                 break;
             }
             store.dispatch(updateScene({ id: command.sceneId, ...command.metadata }));
-            console.log('[WEBSOCKET CMD] Executed update');
+            console.log(logPrefix, 'Update', command.sceneId);
             break;
 
         case 'storeDmx':
@@ -109,7 +111,7 @@ const handleIncomingMessage = (store: Store<RootState>, data: string) => {
             );
 
             store.dispatch(storeDmxToScene({ id: command.sceneId, dmx: dmxToStore }));
-            console.log('[WEBSOCKET CMD] Executed storeDmx');
+            console.log(logPrefix, 'StoreDmx', command.sceneId);
             break;
 
         case 'removeDmx':
@@ -124,10 +126,10 @@ const handleIncomingMessage = (store: Store<RootState>, data: string) => {
                 (universeId) => getLastReceivedDmxDataForUniverse(store.getState(), universeId) ?? {},
             );
             store.dispatch(removeDmxFromScene({ id: command.sceneId, dmx: dmxToRemove }));
-            console.log('[WEBSOCKET CMD] Executed removeDmx');
+            console.log(logPrefix, 'RemoveDmx', command.sceneId);
             break;
 
         default:
-            console.log('[WEBSOCKET CMD] Unknown command');
+            console.log(logPrefix, 'Unknown command');
     }
 };

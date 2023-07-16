@@ -22,7 +22,6 @@ export default function Home() {
 
     const sendCommand = (command: WebsocketCommand) => {
         const payload = JSON.stringify(command);
-        console.log(command);
         sendMessage(payload);
     };
 

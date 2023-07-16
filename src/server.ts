@@ -14,32 +14,23 @@ const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
+const logPrefix = '[INFO]';
+const appName = 'sACN Scene Recorder';
+const universes = [1, 2, 3, 4];
+const priority = 90;
+
 app.prepare().then(async () => {
     const server = express();
 
     // Load state from SQLite
     //
-    store.dispatch(reloadScenes(await readScenes()));
-
-    // Configure next js
-    //
-    server.all('/api/getCurrentState', (_req, res) => {
-        res.send(store.getState());
-    });
-
-    server.all('*', (req, res) => {
-        return handle(req, res);
-    });
-
-    server.listen(port, () => {
-        console.log(`> Ready on http://localhost:${port}`);
-    });
+    await reloadScenesFromDataBase();
 
     // Configure sACN
     //
     const receiverConfiguration: ReceiverConfiguration = {
-        universes: [1, 2, 3, 4],
-        appName: 'sACN Scene Recorder',
+        universes: universes,
+        appName: appName,
         onReceive: (dmxUniverseState) => {
             store.dispatch(dmxReceived(dmxUniverseState));
         },
@@ -47,15 +38,17 @@ app.prepare().then(async () => {
     configureReceiver(receiverConfiguration);
 
     const senderConfiguration: SenderConfiguration = {
-        universes: [1, 2, 3, 4],
-        appName: 'sACN Scene Recorder',
-        priority: 90,
+        universes: universes,
+        appName: appName,
+        priority: priority,
         getDmxDataToSendForUniverse: (universeId: number) =>
             getLastReceivedDmxDataForUniverse(store.getState(), universeId),
     };
     const { startSending, stopSending } = configureSender(senderConfiguration);
     startSending();
 
+    // Configure WebSockets
+    //
     const websocketsData = configureWebsockets(store);
 
     observeStore(
@@ -66,4 +59,40 @@ app.prepare().then(async () => {
             await saveScenes(scenes);
         },
     );
+
+    // Configure next js
+    //
+    server.all('/api/getCurrentState', (_req, res) => {
+        res.send(store.getState());
+    });
+
+    server.all('/api/stopSending', (_req, res) => {
+        stopSending();
+        console.log(logPrefix, 'Stop sending sACN');
+        res.send('Stopped');
+    });
+
+    server.all('/api/startSending', (_req, res) => {
+        startSending();
+        console.log(logPrefix, 'Start sending sACN');
+        res.send('Stopped');
+    });
+
+    server.all('/api/reloadFromDatabase', async (_req, res) => {
+        await reloadScenesFromDataBase();
+        res.send('Reloaded');
+    });
+
+    server.all('*', (req, res) => {
+        return handle(req, res);
+    });
+
+    server.listen(port, () => {
+        console.log(`> Ready on http://localhost:${port}`);
+    });
 });
+
+async function reloadScenesFromDataBase() {
+    console.log(logPrefix, 'Reloading configuration');
+    store.dispatch(reloadScenes(await readScenes()));
+}
