@@ -92,13 +92,11 @@ const scenesSlice = createSlice({
                 return;
             }
 
-            scene.dmxData = {};
-
             action.payload.dmx.forEach((universeData) => {
                 for (const address in universeData.dmx) {
                     const lastReceivedValue = universeData.dmx[address];
-                    const storedValue = scene.dmxData[universeData.universeId][address];
-                    if (lastReceivedValue === storedValue) {
+                    const storedValue = (scene.dmxData[universeData.universeId] ?? {})[address];
+                    if (lastReceivedValue === storedValue && storedValue !== undefined) {
                         delete scene.dmxData[universeData.universeId][address];
                     }
                 }
