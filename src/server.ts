@@ -1,9 +1,7 @@
 import express from 'express';
 import next from 'next';
-import { Store } from 'redux';
 import { dmxReceived, getLastReceivedDmxDataForUniverse } from './business-logic/redux/currentDmxSlice';
-import { getScenes } from './business-logic/redux/scenesSlice';
-import { observeStore, RootState, store } from './business-logic/redux/store';
+import { observeStore, store } from './business-logic/redux/store';
 import { configureWebsockets } from './business-logic/websockets';
 import { ReceiverConfiguration, SenderConfiguration } from './models';
 import { configureReceiver } from './sacn/sacnReceiver';

@@ -12,7 +12,7 @@ import {
 } from './redux/scenesSlice';
 import { RootState } from './redux/store';
 import { getScenes } from './redux/scenesSlice';
-import {WebsocketCommand} from '../models'
+import { WebsocketCommand } from '../models';
 
 export const configureWebsockets = (store: Store<RootState>) => {
     const wss = new WebSocketServer({ port: 8080 });
@@ -104,8 +104,8 @@ const handleIncomingMessage = (store: Store<RootState>, data: string) => {
                 break;
             }
 
-            const dmxToStore = command.universes.map((universeId) =>
-                getLastReceivedDmxDataForUniverse(store.getState(), universeId) ?? {},
+            const dmxToStore = command.universes.map(
+                (universeId) => getLastReceivedDmxDataForUniverse(store.getState(), universeId) ?? {},
             );
 
             store.dispatch(storeDmxToScene({ id: command.sceneId, dmx: dmxToStore }));
@@ -120,8 +120,8 @@ const handleIncomingMessage = (store: Store<RootState>, data: string) => {
                 break;
             }
 
-            const dmxToRemove = command.universes.map((universeId) =>
-                getLastReceivedDmxDataForUniverse(store.getState(), universeId),
+            const dmxToRemove = command.universes.map(
+                (universeId) => getLastReceivedDmxDataForUniverse(store.getState(), universeId) ?? {},
             );
             store.dispatch(removeDmxFromScene({ id: command.sceneId, dmx: dmxToRemove }));
             console.log('[WEBSOCKET CMD] Executed removeDmx');
