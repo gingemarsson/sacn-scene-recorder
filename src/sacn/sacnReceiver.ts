@@ -1,5 +1,5 @@
 import { Receiver } from 'sacn';
-import { ReceiverConfiguration, ReceiverData } from '../models';
+import { ReceiverConfiguration } from '../models';
 import { listToMap } from './utils';
 
 // Config
@@ -13,29 +13,28 @@ export const configureReceiver = (configuration: ReceiverConfiguration) => {
         universes: configuration.universes,
     });
 
-    // Init receiver data structure
-    const receiverData: ReceiverData = {
-        universeData: listToMap(configuration.universes, () => ({ dmx: {}, priority: 0, lastReceived: 0 })),
-        configuration: configuration,
-    };
-    listenForDmx(sACN, receiverData);
+    // Create receiver metadata structure to keep track of priority
+    const receiverMetadata: Record<number, { priority: number; lastReceived: number }> = listToMap(
+        configuration.universes,
+        () => ({
+            priority: 0,
+            lastReceived: 0,
+        }),
+    );
 
-    return receiverData;
-};
-
-const listenForDmx = async (reciver: Receiver, receiverData: ReceiverData) => {
-    reciver.on('packet', async (packet) => {
-        if (!receiverData.configuration.universes.some((x) => x === packet.universe)) {
+    // Listen for packets
+    sACN.on('packet', async (packet) => {
+        if (!configuration.universes.some((x) => x === packet.universe)) {
             // If universe is not recognised, return.
             return;
         }
 
-        if (packet.sourceName === receiverData.configuration.appName) {
+        if (packet.sourceName === configuration.appName) {
             // If sender is this application, return.
             return;
         }
 
-        const metadata = receiverData.universeData[packet.universe];
+        const metadata = receiverMetadata[packet.universe];
         if (
             metadata &&
             metadata.priority > packet.priority &&
@@ -45,11 +44,19 @@ const listenForDmx = async (reciver: Receiver, receiverData: ReceiverData) => {
             return;
         }
 
-        receiverData.universeData[packet.universe] = {
-            dmx: packet.payload,
+        const dmxMetadata = {
             priority: packet.priority,
             lastReceived: Date.now(),
-            sender: packet.sourceName,
         };
+
+        const dmxData = {
+            universeId: packet.universe,
+            dmx: packet.payload,
+            sender: packet.sourceName,
+            ...dmxMetadata,
+        };
+
+        receiverMetadata[packet.universe] = dmxMetadata;
+        configuration.onReceive(dmxData);
     });
 };

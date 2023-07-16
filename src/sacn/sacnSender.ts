@@ -17,21 +17,36 @@ export const configureSender = (senderConfiguration: SenderConfiguration) => {
             }),
     );
 
-    const timer = setInterval(async () => {
-        senderConfiguration.universes.forEach(async (universeId) => {
-            const sender = sACNSenders[universeId];
-            const dataToSend = senderConfiguration.getDmxDataToSendForUniverse(universeId) ?? {};
+    let timer: NodeJS.Timer | null = null;
 
-            await sender.send({
-                payload: dataToSend,
-                sourceName: senderConfiguration.appName,
-                priority: senderConfiguration.priority,
+    const startSending = () => {
+        if (timer) {
+            return;
+        }
+
+        timer = setInterval(async () => {
+            senderConfiguration.universes.forEach(async (universeId) => {
+                const sender = sACNSenders[universeId];
+                const dataToSend = senderConfiguration.getDmxDataToSendForUniverse(universeId) ?? {};
+
+                await sender.send({
+                    payload: dataToSend,
+                    sourceName: senderConfiguration.appName,
+                    priority: senderConfiguration.priority,
+                });
             });
-        });
-    }, sendInterval);
+        }, sendInterval);
+    };
+
+    const stopSending = () => {
+        if (!timer) {
+            return;
+        }
+        clearInterval(timer);
+        timer = null;
+    };
 
     return {
-        timer,
-        configuration: senderConfiguration,
-    };
+        startSending, stopSending
+    }
 };

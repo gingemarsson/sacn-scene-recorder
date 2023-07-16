@@ -1,6 +1,7 @@
 import express from 'express';
 import next from 'next';
-import { StateService } from './business-logic/stateService';
+import { dmxReceived, getDmxDataForUniverse } from './business-logic/redux/currentDmxSlice';
+import { store } from './business-logic/redux/store';
 import { configureWebsockets } from './business-logic/websockets';
 import { ReceiverConfiguration, SenderConfiguration } from './models';
 import { configureReceiver } from './sacn/sacnReceiver';
@@ -13,12 +14,11 @@ const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
     const server = express();
-    const stateService = new StateService();
 
     // Configure next js
     //
     server.all('/api/getCurrentState', (_req, res) => {
-        res.send(stateService.getUniverseData());
+        res.send(store.getState());
     });
 
     server.all('*', (req, res) => {
@@ -34,22 +34,25 @@ app.prepare().then(() => {
     const receiverConfiguration: ReceiverConfiguration = {
         universes: [1, 2, 3, 4],
         appName: 'sACN Scene Recorder',
+        onReceive: (dmxUniverseState) => {
+            store.dispatch(dmxReceived(dmxUniverseState));
+        },
     };
-    const receiverData = configureReceiver(receiverConfiguration);
-    stateService.configureReceiver(receiverData);
+    configureReceiver(receiverConfiguration);
 
     const senderConfiguration: SenderConfiguration = {
         universes: [1, 2, 3, 4],
         appName: 'sACN Scene Recorder',
         priority: 90,
-        getDmxDataToSendForUniverse: (universeId: number) => stateService.getDmxDataForUniverse(universeId),
+        getDmxDataToSendForUniverse: (universeId: number) => getDmxDataForUniverse(store.getState(), universeId),
     };
-    const senderData = configureSender(senderConfiguration);
+    const {startSending, stopSending} = configureSender(senderConfiguration);
+    startSending();
 
     const websocketsData = configureWebsockets();
 
     // Websocket proof of concept
     const timer = setInterval(async () => {
-        websocketsData.broadcast(JSON.stringify(stateService.getDmxDataForUniverse(1)), false);
+        websocketsData.broadcast(JSON.stringify(getDmxDataForUniverse(store.getState(), 1)), false);
     }, 1000);
 });
