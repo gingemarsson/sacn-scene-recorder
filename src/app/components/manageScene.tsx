@@ -49,6 +49,21 @@ const ManageScene: FC<Props> = ({ disabled, sceneToEdit, setSceneToEdit, sendCom
                     onChange={(e) => setSceneToEdit((x) => (x === null ? null : { ...x, color: e.target.value ?? '' }))}
                 />
             </div>
+            <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="sortIndex">
+                    SortIndex
+                </label>
+                <input
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    type="number"
+                    id="sortIndex"
+                    placeholder="0"
+                    value={sceneToEdit.sortIndex}
+                    onChange={(e) =>
+                        setSceneToEdit((x) => (x === null ? null : { ...x, sortIndex: parseInt(e.target.value ?? '') }))
+                    }
+                />
+            </div>
             <div className="flex items-center justify-end">
                 <button
                     className="bg-indigo-500 hover:bg-indigo-700 disabled:bg-gray-700 text-sm text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
@@ -57,7 +72,12 @@ const ManageScene: FC<Props> = ({ disabled, sceneToEdit, setSceneToEdit, sendCom
                         sendCommand({
                             type: 'update',
                             sceneId: sceneToEdit.id,
-                            metadata: { name: sceneToEdit.name, color: sceneToEdit.color },
+                            metadata: {
+                                name: sceneToEdit.name,
+                                color: sceneToEdit.color,
+                                category: sceneToEdit.category,
+                                sortIndex: sceneToEdit.sortIndex,
+                            },
                         })
                     }
                     disabled={disabled}

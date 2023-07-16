@@ -27,11 +27,16 @@ const scenesSlice = createSlice({
 
             scene.enabled = false;
         },
-        addScene(state, action: PayloadAction<{ name: string; color: string }>) {
+        addScene(
+            state,
+            action: PayloadAction<{ name: string; color: string; category: string | null; sortIndex: number }>,
+        ) {
             state.push({
                 id: webcrypto.randomUUID(),
                 name: action.payload.name,
                 color: action.payload.color,
+                category: action.payload.category,
+                sortIndex: action.payload.sortIndex,
                 created: Date.now(),
                 updated: Date.now(),
                 dmxData: {},
@@ -41,7 +46,16 @@ const scenesSlice = createSlice({
         deleteScene(state, action: PayloadAction<string>) {
             return state.filter((x) => x.id !== action.payload);
         },
-        updateScene(state, action: PayloadAction<{ id: string; name: string; color: string }>) {
+        updateScene(
+            state,
+            action: PayloadAction<{
+                id: string;
+                name: string;
+                color: string;
+                category: string | null;
+                sortIndex: number;
+            }>,
+        ) {
             const scene = state.find((x) => x.id === action.payload.id);
 
             if (!scene) {
@@ -57,6 +71,18 @@ const scenesSlice = createSlice({
             const newColor = action.payload.color?.trim();
             if (newColor && newColor.length > 0) {
                 scene.color = newColor;
+                scene.updated = Date.now();
+            }
+
+            const newCategory = action.payload.category?.trim() ?? null;
+            if (newCategory === null || (newCategory !== undefined && newCategory?.length > 0)) {
+                scene.category = newCategory;
+                scene.updated = Date.now();
+            }
+
+            const newSortIndex = action.payload.sortIndex;
+            if (newSortIndex !== undefined && newSortIndex !== null) {
+                scene.sortIndex = newSortIndex;
                 scene.updated = Date.now();
             }
         },

@@ -26,7 +26,7 @@ export type SenderConfiguration = {
 export type WebsocketCommand = {
     type: 'enable' | 'disable' | 'add' | 'update' | 'delete' | 'storeDmx' | 'removeDmx';
     sceneId?: string;
-    metadata?: { name: string; color: string };
+    metadata?: { name: string; color: string; category: string | null; sortIndex: number };
     universes?: number[];
 };
 
@@ -36,6 +36,8 @@ export type SceneData = {
     updated: number;
     name: string;
     color: string;
+    category: string | null;
+    sortIndex: number;
     dmxData: Record<number, DmxUniverseData>;
     enabled: boolean;
 };
