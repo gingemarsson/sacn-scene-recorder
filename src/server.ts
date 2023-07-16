@@ -1,7 +1,7 @@
 import express from 'express';
 import next from 'next';
-import { dmxReceived, getLastReceivedDmxDataForUniverse } from './business-logic/redux/currentDmxSlice';
-import { reloadScenes } from './business-logic/redux/scenesSlice';
+import { dmxReceived } from './business-logic/redux/currentDmxSlice';
+import { getDmxDataToSendForUniverse, reloadScenes } from './business-logic/redux/scenesSlice';
 import { observeStore, store } from './business-logic/redux/store';
 import { configureWebsockets } from './business-logic/websockets';
 import { readScenes, saveScenes } from './lib/database';
@@ -41,8 +41,7 @@ app.prepare().then(async () => {
         universes: universes,
         appName: appName,
         priority: priority,
-        getDmxDataToSendForUniverse: (universeId: number) =>
-            getLastReceivedDmxDataForUniverse(store.getState(), universeId),
+        getDmxDataToSendForUniverse: (universeId: number) => getDmxDataToSendForUniverse(store.getState(), universeId),
     };
     const { startSending, stopSending } = configureSender(senderConfiguration);
     startSending();
@@ -76,6 +75,12 @@ app.prepare().then(async () => {
         startSending();
         console.log(logPrefix, 'Start sending sACN');
         res.send('Stopped');
+    });
+
+    server.all('/api/resetWebSockets', async (_req, res) => {
+        websocketsData.closeAll();
+        console.log(logPrefix, 'Close all WebSockets');
+        res.send('WebSockets closed');
     });
 
     server.all('/api/reloadFromDatabase', async (_req, res) => {

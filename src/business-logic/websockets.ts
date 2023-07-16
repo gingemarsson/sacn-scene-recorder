@@ -36,6 +36,7 @@ export const configureWebsockets = (store: Store<RootState>) => {
                     client.send(data, { binary: isBinary });
                 }
             }),
+        closeAll: () => wss.clients.forEach((x) => x.close()),
     };
 };
 
