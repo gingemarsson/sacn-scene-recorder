@@ -44,19 +44,26 @@ export default function Home() {
                 </div>
             </div>
 
-            {categories.filter(category => isEditing || (lastJsonMessage ?? []).filter(x => x.category === category).length > 0).map((category, index) => 
-                            <SceneCategory
+            <div className="w-full max-w-6xl">
+                {categories
+                    .filter(
+                        (category) =>
+                            isEditing || (lastJsonMessage ?? []).filter((x) => x.category === category).length > 0,
+                    )
+                    .map((category, index) => (
+                        <SceneCategory
                             key={index}
                             disabled={readyState !== ReadyState.OPEN}
                             isEditing={isEditing}
                             categoryName={category}
-                            scenes={(lastJsonMessage ?? []).filter(x => x.category === category)}
+                            scenes={(lastJsonMessage ?? []).filter((x) => x.category === category)}
                             sendCommand={sendCommand}
                             sendMessage={sendMessage}
                         />
-                )}
+                    ))}
 
-            {categories.length === 0 ? <p>No scene categories defined</p> : null}
+                {categories.length === 0 ? <p>No scene categories defined</p> : null}
+            </div>
 
             <div className="relative flex place-items-center text-slate-50 text-opacity-50 mt-3">
                 <small>sACN Scene Recorder v0.1</small>

@@ -1,6 +1,6 @@
 export interface HasSortIndex {
     sortIndex: number;
-};
+}
 
 export const sortIndexSortFn = (a: HasSortIndex, b: HasSortIndex) => {
     if ((a.sortIndex ?? 0) < (b.sortIndex ?? 0)) {

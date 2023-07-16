@@ -34,19 +34,18 @@ const SceneCategory: FC<Props> = ({ sendCommand, sendMessage, scenes, categoryNa
             2,
         );
 
-        const getSceneChannelCount = (scene: SceneData) => {
-            return Object.keys(scene.dmxData).reduce(
-                (sum, universeId) =>
-                    sum + Object.keys(scene.dmxData[parseInt(universeId)]).length,
-                0,
-            )
-        }
+    const getSceneChannelCount = (scene: SceneData) => {
+        return Object.keys(scene.dmxData).reduce(
+            (sum, universeId) => sum + Object.keys(scene.dmxData[parseInt(universeId)]).length,
+            0,
+        );
+    };
 
     return (
-        <div className="relative flex w-full max-w-6xl flex-col mt-8">
-            <div className='flex justify-start items-baseline gap-3'>
-            <h1 className="relative flex-none mb-3 text-2xl font-semibold">{categoryName}</h1>
-            {scenes.some(x => x.enabled) ? <div className="relative uppercase text-teal-400">Active</div> : null}
+        <div className="relative flex flex-col mt-8">
+            <div className="flex justify-start items-baseline gap-3">
+                <h1 className="relative flex-none mb-3 text-2xl font-semibold">{categoryName}</h1>
+                {scenes.some((x) => x.enabled) ? <div className="relative uppercase text-teal-400">Active</div> : null}
             </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
                 {scenes.sort(sortIndexSortFn).map((scene) => (
@@ -57,16 +56,17 @@ const SceneCategory: FC<Props> = ({ sendCommand, sendMessage, scenes, categoryNa
                     >
                         <div className="flex flex-col justify-between h-full">
                             <div>
-                                <h1 className="relative w-full flex-none mb-2 text-2xl font-semibold">{scene.name}</h1>
-                                {getSceneChannelCount(scene) === 0 ? <div className="relative text-sm text-gray-50">
-                                       No DMX data
-                                </div> : <>
-                                <div className="relative text-sm" onClick={() => console.log(scene.dmxData)}>
-                                    DMX Universes: {Object.keys(scene.dmxData).join(', ')}
-                                </div>
-                                <div className="relative text-sm">
-                                       {getSceneChannelCount(scene)} channels
-                                </div></>}
+                                <h1 className="relative w-full flex-none mb-2 text-xl font-semibold">{scene.name}</h1>
+                                {getSceneChannelCount(scene) === 0 ? (
+                                    <div className="relative text-sm text-gray-50">No DMX data</div>
+                                ) : (
+                                    <>
+                                        <div className="relative text-sm" onClick={() => console.log(scene.dmxData)}>
+                                            DMX Universes: {Object.keys(scene.dmxData).join(', ')}
+                                        </div>
+                                        <div className="relative text-sm">{getSceneChannelCount(scene)} channels</div>
+                                    </>
+                                )}
                                 {scene.enabled ? <div className="relative uppercase text-teal-400">Active</div> : null}
                             </div>
                             {isEditing ? (
