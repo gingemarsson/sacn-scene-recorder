@@ -1,6 +1,8 @@
+import { Store } from 'redux';
 import { WebSocketServer, WebSocket } from 'ws';
+import { RootState } from './redux/store';
 
-export const configureWebsockets = () => {
+export const configureWebsockets = (store: Store<RootState>) => {
     const wss = new WebSocketServer({ port: 8080 });
 
     wss.on('connection', (ws) => {

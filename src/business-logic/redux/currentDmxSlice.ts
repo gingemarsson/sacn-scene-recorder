@@ -18,4 +18,4 @@ export const { dmxReceived } = currentDmxSlice.actions;
 
 export default currentDmxSlice.reducer;
 
-export const getDmxDataForUniverse = (state: RootState, universeId: number) => state.currentDmx[universeId];
+export const getLastReceivedDmxDataForUniverse = (state: RootState, universeId: number) => state.currentDmx[universeId];

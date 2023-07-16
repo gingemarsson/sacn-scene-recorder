@@ -1,6 +1,6 @@
 import express from 'express';
 import next from 'next';
-import { dmxReceived, getDmxDataForUniverse } from './business-logic/redux/currentDmxSlice';
+import { dmxReceived, getLastReceivedDmxDataForUniverse } from './business-logic/redux/currentDmxSlice';
 import { store } from './business-logic/redux/store';
 import { configureWebsockets } from './business-logic/websockets';
 import { ReceiverConfiguration, SenderConfiguration } from './models';
@@ -44,15 +44,16 @@ app.prepare().then(() => {
         universes: [1, 2, 3, 4],
         appName: 'sACN Scene Recorder',
         priority: 90,
-        getDmxDataToSendForUniverse: (universeId: number) => getDmxDataForUniverse(store.getState(), universeId),
+        getDmxDataToSendForUniverse: (universeId: number) =>
+            getLastReceivedDmxDataForUniverse(store.getState(), universeId),
     };
-    const {startSending, stopSending} = configureSender(senderConfiguration);
+    const { startSending, stopSending } = configureSender(senderConfiguration);
     startSending();
 
-    const websocketsData = configureWebsockets();
+    const websocketsData = configureWebsockets(store);
 
     // Websocket proof of concept
     const timer = setInterval(async () => {
-        websocketsData.broadcast(JSON.stringify(getDmxDataForUniverse(store.getState(), 1)), false);
+        websocketsData.broadcast(JSON.stringify(getLastReceivedDmxDataForUniverse(store.getState(), 1)), false);
     }, 1000);
 });

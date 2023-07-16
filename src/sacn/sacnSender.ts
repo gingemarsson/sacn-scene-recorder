@@ -47,6 +47,7 @@ export const configureSender = (senderConfiguration: SenderConfiguration) => {
     };
 
     return {
-        startSending, stopSending
-    }
+        startSending,
+        stopSending,
+    };
 };
