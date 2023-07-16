@@ -39,7 +39,7 @@ const scenesSlice = createSlice({
             });
         },
         deleteScene(state, action: PayloadAction<string>) {
-            state = state.filter((x) => x.id !== action.payload);
+            return state.filter((x) => x.id !== action.payload);
         },
         updateScene(state, action: PayloadAction<{ id: string; name: string; color: string }>) {
             const scene = state.find((x) => x.id === action.payload.id);
