@@ -47,23 +47,20 @@ const SceneCategory: FC<Props> = ({ sendCommand, sendMessage, scenes, categoryNa
                 <h1 className="relative flex-none mb-3 text-2xl font-semibold">{categoryName}</h1>
                 {scenes.some((x) => x.enabled) ? <div className="relative uppercase text-teal-400">Active</div> : null}
             </div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-                {scenes.sort(sortIndexSortFn).map((scene) => (
+            <div className="grid grid-cols-1 gap-4 grid-flow-row-dense md:grid-cols-2 lg:grid-cols-4">
+                {scenes.sort(sortIndexSortFn).map((scene) => (<>
                     <div
                         className="bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4 border-t-8 h-56"
                         key={scene.id}
                         style={{ borderTopColor: scene.color }}
                     >
                         <div className="flex flex-col justify-between h-full">
-                            <div>
+                            <div onClick={() => console.log(scene)}>
                                 <h1 className="relative w-full flex-none mb-2 text-xl font-semibold">{scene.name}</h1>
                                 {getSceneChannelCount(scene) === 0 ? (
-                                    <div className="relative text-sm text-gray-50">No DMX data</div>
+                                    <div className="relative text-sm text-gray-50 text-opacity-50">No DMX data</div>
                                 ) : (
                                     <>
-                                        <div className="relative text-sm" onClick={() => console.log(scene.dmxData)}>
-                                            DMX Universes: {Object.keys(scene.dmxData).join(', ')}
-                                        </div>
                                         <div className="relative text-sm">{getSceneChannelCount(scene)} channels</div>
                                     </>
                                 )}
@@ -72,9 +69,13 @@ const SceneCategory: FC<Props> = ({ sendCommand, sendMessage, scenes, categoryNa
                             {isEditing ? (
                                 <div className="flex flex-row">
                                     <button
-                                        className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 text-sm rounded focus:outline-none focus:shadow-outline flex-1"
-                                        type="button"
-                                        onClick={() => setSceneToEdit({ ...scene })}
+                                    className={
+                                        'text-white font-bold py-4 px-4 text-sm rounded focus:outline-none focus:shadow-outline disabled:bg-gray-700 flex-1 ' +
+                                        (sceneToEdit && sceneToEdit.id == scene.id
+                                            ? 'bg-teal-500 hover:bg-teal-700'
+                                            : 'bg-indigo-500 hover:bg-indigo-700')
+                                    }                                        type="button"
+                                        onClick={() => setSceneToEdit((sceneToEdit && sceneToEdit.id == scene.id) ? null : ({ ...scene }))}
                                         disabled={disabled}
                                     >
                                         Edit
@@ -110,6 +111,18 @@ const SceneCategory: FC<Props> = ({ sendCommand, sendMessage, scenes, categoryNa
                             )}
                         </div>
                     </div>
+                    {sceneToEdit && sceneToEdit.id == scene.id? (
+                        <div className='col-span-1 md:col-span-2 lg:col-span-4'>
+
+                            <ManageScene
+                                disabled={disabled}
+                                sceneToEdit={sceneToEdit}
+                                setSceneToEdit={setSceneToEdit}
+                                sendCommand={sendCommand}
+                                />
+                                </div>
+                        ) : null}
+                    </>
                 ))}
                 {isEditing ? (
                     <button
@@ -140,14 +153,7 @@ const SceneCategory: FC<Props> = ({ sendCommand, sendMessage, scenes, categoryNa
             {isEditing ? (
                 <>
                     <div className="relative flex place-items-center w-full max-w-6xl flex-col">
-                        {sceneToEdit !== null ? (
-                            <ManageScene
-                                disabled={disabled}
-                                sceneToEdit={sceneToEdit}
-                                setSceneToEdit={setSceneToEdit}
-                                sendCommand={sendCommand}
-                            />
-                        ) : null}
+
 
                         {selectedJSON !== null ? (
                             <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full">
