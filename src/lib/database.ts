@@ -1,0 +1,49 @@
+import { SceneData } from '@/models.js';
+import Knex from 'knex';
+import knexConfiguration from './knexConfiguration.js';
+
+const knex = Knex<Record<string, unknown>[], Record<string, unknown>[]>(knexConfiguration.production);
+
+export const readScenes = async (): Promise<SceneData[]> =>
+    (
+        await knex('scene').select({
+            id: 'id',
+            created: 'created',
+            updated: 'updated',
+            name: 'name',
+            color: 'color',
+            category: 'category',
+            sortIndex: 'sortIndex',
+            enabled: 'enabled',
+            dmxData: 'dmxData',
+        })
+    ).map((scene) => {
+        return {
+            id: scene.id,
+            created: scene.created,
+            updated: scene.updated,
+            name: scene.name,
+            color: scene.color,
+            category: scene.category,
+            sortIndex: scene.sortIndex,
+            enabled: scene.enabled,
+            dmxData: JSON.parse(scene.dmxData),
+        };
+    });
+
+export const saveScenes = async (scenes: SceneData[]) => {
+    knex.transaction((trx) => {
+        knex('scene')
+            .transacting(trx)
+            .truncate()
+            .then(() =>
+                scenes.length > 0
+                    ? knex('scene')
+                          .transacting(trx)
+                          .insert(scenes.map((x) => ({ ...x, dmxData: JSON.stringify(x.dmxData) })))
+                    : null,
+            )
+            .then(trx.commit)
+            .catch(trx.rollback);
+    });
+};

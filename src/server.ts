@@ -1,8 +1,10 @@
 import express from 'express';
 import next from 'next';
 import { dmxReceived, getLastReceivedDmxDataForUniverse } from './business-logic/redux/currentDmxSlice';
+import { reloadScenes } from './business-logic/redux/scenesSlice';
 import { observeStore, store } from './business-logic/redux/store';
 import { configureWebsockets } from './business-logic/websockets';
+import { readScenes, saveScenes } from './lib/database';
 import { ReceiverConfiguration, SenderConfiguration } from './models';
 import { configureReceiver } from './sacn/sacnReceiver';
 import { configureSender } from './sacn/sacnSender';
@@ -12,8 +14,12 @@ const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
-app.prepare().then(() => {
+app.prepare().then(async () => {
     const server = express();
+
+    // Load state from SQLite
+    //
+    store.dispatch(reloadScenes(await readScenes()));
 
     // Configure next js
     //
@@ -55,8 +61,9 @@ app.prepare().then(() => {
     observeStore(
         store,
         (x) => x.scenes,
-        (sceneData) => {
-            websocketsData.broadcast(JSON.stringify(sceneData), false);
+        async (scenes) => {
+            websocketsData.broadcast(JSON.stringify(scenes), false);
+            await saveScenes(scenes);
         },
     );
 });

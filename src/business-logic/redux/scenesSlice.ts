@@ -120,11 +120,22 @@ const scenesSlice = createSlice({
 
             scene.updated = Date.now();
         },
+        reloadScenes(_state, action: PayloadAction<SceneData[]>) {
+            return action.payload;
+        },
     },
 });
 
-export const { enableScene, disableScene, addScene, deleteScene, updateScene, storeDmxToScene, removeDmxFromScene } =
-    scenesSlice.actions;
+export const {
+    enableScene,
+    disableScene,
+    addScene,
+    deleteScene,
+    updateScene,
+    storeDmxToScene,
+    removeDmxFromScene,
+    reloadScenes,
+} = scenesSlice.actions;
 
 export default scenesSlice.reducer;
 
