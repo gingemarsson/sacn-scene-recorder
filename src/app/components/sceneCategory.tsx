@@ -39,7 +39,7 @@ const SceneCategory: FC<Props> = ({ sendCommand, scenes, categoryName, isEditing
                         >
                             <div className="flex flex-col justify-between h-full">
                                 <div onClick={() => console.log(scene)}>
-                                    <h1 className="relative w-full flex-none mb-1 text-l font-semibold">
+                                    <h1 className="relative w-full flex-none mb-1 text-l font-semibold line-clamp-2">
                                         {scene.name}
                                     </h1>
                                     {getSceneChannelCount(scene) === 0 ? (
