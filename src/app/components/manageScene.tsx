@@ -2,6 +2,7 @@
 
 import { SceneData, WebsocketCommand } from '@/models';
 import { FC } from 'react';
+import { SliderPicker } from 'react-color';
 
 type Props = {
     disabled: boolean;
@@ -12,11 +13,11 @@ type Props = {
 
 const ManageScene: FC<Props> = ({ disabled, sceneToEdit, setSceneToEdit, sendCommand }: Props) => {
     return (
-        <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full">
+        <form className="bg-white shadow-md rounded px-6 pt-4 pb-6 mb-4 w-full">
             <div className="flex justify-between">
                 <h1 className="text-gray-900 font-semibold">Manage scene &quot;{sceneToEdit?.name}&quot;</h1>
                 <button
-                    className="bg-indigo-500 hover:bg-indigo-700 disabled:bg-gray-700 text-sm text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-3"
+                    className="bg-indigo-500 hover:bg-indigo-700 disabled:bg-gray-700 text-xs text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-3"
                     type="button"
                     onClick={() => setSceneToEdit(() => null)}
                 >
@@ -28,7 +29,7 @@ const ManageScene: FC<Props> = ({ disabled, sceneToEdit, setSceneToEdit, sendCom
                     Name
                 </label>
                 <input
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm"
                     type="text"
                     id="name"
                     placeholder="My favorite scene"
@@ -41,12 +42,16 @@ const ManageScene: FC<Props> = ({ disabled, sceneToEdit, setSceneToEdit, sendCom
                     Color
                 </label>
                 <input
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-3 text-sm"
                     type="text"
                     id="color"
                     placeholder="#374151"
                     value={sceneToEdit.color}
                     onChange={(e) => setSceneToEdit((x) => (x === null ? null : { ...x, color: e.target.value ?? '' }))}
+                />
+                <SliderPicker
+                    color={sceneToEdit.color}
+                    onChange={(color) => setSceneToEdit((x) => (x === null ? null : { ...x, color: color.hex }))}
                 />
             </div>
             <div className="mb-4">
@@ -54,7 +59,7 @@ const ManageScene: FC<Props> = ({ disabled, sceneToEdit, setSceneToEdit, sendCom
                     SortIndex
                 </label>
                 <input
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm"
                     type="number"
                     id="sortIndex"
                     placeholder="0"
@@ -66,7 +71,7 @@ const ManageScene: FC<Props> = ({ disabled, sceneToEdit, setSceneToEdit, sendCom
             </div>
             <div className="flex items-center justify-end">
                 <button
-                    className="bg-indigo-500 hover:bg-indigo-700 disabled:bg-gray-700 text-sm text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    className="bg-indigo-500 hover:bg-indigo-700 disabled:bg-gray-700 text-xs text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     type="button"
                     onClick={() =>
                         sendCommand({
@@ -88,7 +93,7 @@ const ManageScene: FC<Props> = ({ disabled, sceneToEdit, setSceneToEdit, sendCom
             <hr className="my-3" />
             <div className="flex gap-3">
                 <button
-                    className="bg-indigo-500 hover:bg-indigo-700 disabled:bg-gray-700 text-sm text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    className="bg-indigo-500 hover:bg-indigo-700 disabled:bg-gray-700 text-xs text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     type="button"
                     onClick={() => {
                         sendCommand({
@@ -102,7 +107,7 @@ const ManageScene: FC<Props> = ({ disabled, sceneToEdit, setSceneToEdit, sendCom
                     Save DMX
                 </button>
                 <button
-                    className="bg-indigo-500 hover:bg-indigo-700 disabled:bg-gray-700 text-sm text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    className="bg-indigo-500 hover:bg-indigo-700 disabled:bg-gray-700 text-xs text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     type="button"
                     onClick={() => {
                         sendCommand({
@@ -116,7 +121,7 @@ const ManageScene: FC<Props> = ({ disabled, sceneToEdit, setSceneToEdit, sendCom
                     Remove DMX
                 </button>
                 <button
-                    className="bg-red-500 hover:bg-red-700 disabled:bg-gray-700 text-sm text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    className="bg-red-500 hover:bg-red-700 disabled:bg-gray-700 text-xs text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     type="button"
                     onClick={() => {
                         sendCommand({

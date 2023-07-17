@@ -4,6 +4,7 @@ import { sortIndexSortFn } from '@/lib/utils';
 import { SceneData, WebsocketCommand } from '@/models';
 import { FC, useState } from 'react';
 import ManageScene from './manageScene';
+import React from 'react';
 
 type Props = {
     disabled: boolean;
@@ -11,28 +12,10 @@ type Props = {
     categoryName: string;
     scenes: SceneData[];
     sendCommand: (command: WebsocketCommand) => void;
-    sendMessage: (message: string) => void;
 };
 
-const SceneCategory: FC<Props> = ({ sendCommand, sendMessage, scenes, categoryName, isEditing, disabled }: Props) => {
-    const [selectedJSON, setSelectedJSON] = useState<string | null>(null);
+const SceneCategory: FC<Props> = ({ sendCommand, scenes, categoryName, isEditing, disabled }: Props) => {
     const [sceneToEdit, setSceneToEdit] = useState<SceneData | null>(null);
-
-    const getCommandJsonForScene = (scene: SceneData): string =>
-        JSON.stringify(
-            {
-                type: 'enable',
-                availableTypes: 'enable/disable/add/update/delete/storeDmx/removeDmx',
-                sceneId: scene.id,
-                metadata: {
-                    name: scene.name,
-                    color: scene.color,
-                },
-                universes: Object.keys(scene.dmxData).map((x) => parseInt(x)),
-            },
-            undefined,
-            2,
-        );
 
     const getSceneChannelCount = (scene: SceneData) => {
         return Object.keys(scene.dmxData).reduce(
@@ -47,24 +30,23 @@ const SceneCategory: FC<Props> = ({ sendCommand, sendMessage, scenes, categoryNa
                 <h1 className="relative flex-none mb-3 text-2xl font-semibold">{categoryName}</h1>
                 {scenes.some((x) => x.enabled) ? <div className="relative uppercase text-teal-400">Active</div> : null}
             </div>
-            <div className="grid grid-cols-1 gap-4 grid-flow-row-dense md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-4 grid-flow-row-dense md:grid-cols-3 lg:grid-cols-5">
                 {scenes.sort(sortIndexSortFn).map((scene) => (
-                    <>
+                    <React.Fragment key={scene.id}>
                         <div
-                            className="bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4 border-t-8 h-56"
-                            key={scene.id}
+                            className="bg-gray-800 shadow-md rounded px-6 pt-4 pb-6 mb-4 border-t-8 h-48"
                             style={{ borderTopColor: scene.color }}
                         >
                             <div className="flex flex-col justify-between h-full">
                                 <div onClick={() => console.log(scene)}>
-                                    <h1 className="relative w-full flex-none mb-2 text-xl font-semibold">
+                                    <h1 className="relative w-full flex-none mb-1 text-l font-semibold">
                                         {scene.name}
                                     </h1>
                                     {getSceneChannelCount(scene) === 0 ? (
-                                        <div className="relative text-sm text-gray-50 text-opacity-50">No DMX data</div>
+                                        <div className="relative text-xs text-gray-50 text-opacity-50">No DMX data</div>
                                     ) : (
                                         <>
-                                            <div className="relative text-sm">
+                                            <div className="relative text-xs">
                                                 {getSceneChannelCount(scene)} channels
                                             </div>
                                         </>
@@ -77,7 +59,7 @@ const SceneCategory: FC<Props> = ({ sendCommand, sendMessage, scenes, categoryNa
                                     <div className="flex flex-row">
                                         <button
                                             className={
-                                                'text-white font-bold py-4 px-4 text-sm rounded focus:outline-none focus:shadow-outline disabled:bg-gray-700 flex-1 ' +
+                                                'text-white font-bold py-2 px-2 text-xs rounded focus:outline-none focus:shadow-outline disabled:bg-gray-700 flex-1 ' +
                                                 (sceneToEdit && sceneToEdit.id == scene.id
                                                     ? 'bg-teal-500 hover:bg-teal-700'
                                                     : 'bg-indigo-500 hover:bg-indigo-700')
@@ -92,19 +74,11 @@ const SceneCategory: FC<Props> = ({ sendCommand, sendMessage, scenes, categoryNa
                                         >
                                             Edit
                                         </button>
-                                        <button
-                                            className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 text-sm rounded focus:outline-none focus:shadow-outline flex-1 ml-3"
-                                            type="button"
-                                            onClick={() => setSelectedJSON(getCommandJsonForScene(scene))}
-                                            disabled={disabled}
-                                        >
-                                            Send JSON
-                                        </button>
                                     </div>
                                 ) : (
                                     <button
                                         className={
-                                            'text-white font-bold py-4 px-4 text-sm rounded focus:outline-none focus:shadow-outline disabled:bg-gray-700 ' +
+                                            'text-white font-bold py-2 px-2 text-xs rounded focus:outline-none focus:shadow-outline disabled:bg-gray-700 ' +
                                             (scene.enabled
                                                 ? 'bg-teal-500 hover:bg-teal-700'
                                                 : 'bg-indigo-500 hover:bg-indigo-700')
@@ -123,8 +97,8 @@ const SceneCategory: FC<Props> = ({ sendCommand, sendMessage, scenes, categoryNa
                                 )}
                             </div>
                         </div>
-                        {sceneToEdit && sceneToEdit.id == scene.id ? (
-                            <div className="col-span-1 md:col-span-2 lg:col-span-4">
+                        {isEditing && sceneToEdit && sceneToEdit.id == scene.id ? (
+                            <div className="col-span-1 md:col-span-3 lg:col-span-5">
                                 <ManageScene
                                     disabled={disabled}
                                     sceneToEdit={sceneToEdit}
@@ -133,11 +107,11 @@ const SceneCategory: FC<Props> = ({ sendCommand, sendMessage, scenes, categoryNa
                                 />
                             </div>
                         ) : null}
-                    </>
+                    </React.Fragment>
                 ))}
                 {isEditing ? (
                     <button
-                        className="bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4 h-56 bg-indigo-500 hover:bg-indigo-700 disabled:bg-gray-700"
+                        className="bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4 h-48 bg-indigo-500 hover:bg-indigo-700 disabled:bg-gray-700 text-white text-opacity-70 hover:text-opacity-100"
                         disabled={disabled}
                         onClick={() =>
                             sendCommand({
@@ -155,50 +129,11 @@ const SceneCategory: FC<Props> = ({ sendCommand, sendMessage, scenes, categoryNa
                     </button>
                 ) : null}
             </div>
+
             {scenes.length === 0 && !isEditing ? (
                 <div className="text-slate-700 mx-auto my-8">
                     No scenes available. Click edit below to add the first one.
                 </div>
-            ) : null}
-
-            {isEditing ? (
-                <>
-                    <div className="relative flex place-items-center w-full max-w-6xl flex-col">
-                        {selectedJSON !== null ? (
-                            <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full">
-                                <div className="mb-4">
-                                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="json">
-                                        Send JSON Message
-                                    </label>
-                                    <textarea
-                                        className="shadow appearance-none border rounded w-full h-80 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                        id="json"
-                                        placeholder="{...}"
-                                        value={selectedJSON}
-                                        onChange={(e) => setSelectedJSON(e.target.value)}
-                                    />
-                                </div>
-                                <div className="flex items-center justify-end">
-                                    <button
-                                        className="bg-indigo-500 hover:bg-indigo-700 disabled:bg-gray-700 text-sm text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-3"
-                                        type="button"
-                                        onClick={() => setSelectedJSON(null)}
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button
-                                        className="bg-indigo-500 hover:bg-indigo-700 disabled:bg-gray-700 text-sm text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                                        type="button"
-                                        onClick={() => sendMessage(selectedJSON)}
-                                        disabled={disabled}
-                                    >
-                                        Send
-                                    </button>
-                                </div>
-                            </form>
-                        ) : null}
-                    </div>
-                </>
             ) : null}
         </div>
     );
