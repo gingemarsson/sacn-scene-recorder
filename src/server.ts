@@ -43,7 +43,7 @@ app.prepare().then(async () => {
         priority: priority,
         getDmxDataToSendForUniverse: (universeId: number) => getDmxDataToSendForUniverse(store.getState(), universeId),
     };
-    const { startSending, stopSending } = configureSender(senderConfiguration);
+    const { startSending, stopSending, sendOnce } = configureSender(senderConfiguration);
     startSending();
 
     // Configure WebSockets
@@ -54,6 +54,7 @@ app.prepare().then(async () => {
         store,
         (x) => x.scenes,
         async (scenes) => {
+            sendOnce();
             websocketsData.broadcast(JSON.stringify(scenes), false);
             await saveScenes(scenes);
         },

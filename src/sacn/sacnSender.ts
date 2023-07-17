@@ -25,16 +25,7 @@ export const configureSender = (senderConfiguration: SenderConfiguration) => {
         }
 
         timer = setInterval(async () => {
-            senderConfiguration.universes.forEach(async (universeId) => {
-                const sender = sACNSenders[universeId];
-                const dataToSend = senderConfiguration.getDmxDataToSendForUniverse(universeId) ?? {};
-
-                await sender.send({
-                    payload: dataToSend,
-                    sourceName: senderConfiguration.appName,
-                    priority: senderConfiguration.priority,
-                });
-            });
+            send(senderConfiguration, sACNSenders);
         }, sendInterval);
     };
 
@@ -49,5 +40,19 @@ export const configureSender = (senderConfiguration: SenderConfiguration) => {
     return {
         startSending,
         stopSending,
+        sendOnce: () => send(senderConfiguration, sACNSenders)
     };
 };
+
+const send = (senderConfiguration: SenderConfiguration, sACNSenders: Record<number, Sender>) => {
+    senderConfiguration.universes.forEach(async (universeId) => {
+        const sender = sACNSenders[universeId];
+        const dataToSend = senderConfiguration.getDmxDataToSendForUniverse(universeId) ?? {};
+        await sender.send({
+            payload: dataToSend,
+            sourceName: senderConfiguration.appName,
+            priority: senderConfiguration.priority,
+        });
+    });
+}
+
