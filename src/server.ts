@@ -16,7 +16,7 @@ const handle = app.getRequestHandler();
 
 const logPrefix = '[INFO]';
 const appName = 'sACN Scene Recorder';
-const universes = [1, 2, 3, 4];
+const universes = JSON.parse(process.env.NEXT_PUBLIC_UNIVERSES_JSON ?? '[1]');
 const priority = 90;
 
 app.prepare().then(async () => {
