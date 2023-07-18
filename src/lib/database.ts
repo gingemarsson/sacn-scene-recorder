@@ -16,6 +16,11 @@ export const readScenes = async (): Promise<SceneData[]> =>
             sortIndex: 'sortIndex',
             enabled: 'enabled',
             dmxData: 'dmxData',
+            useMaster: 'useMaster',
+            master: 'master',
+            fade: 'fade',
+            fadeEnableCompleted: 'fadeEnableCompleted',
+            fadeDisableCompleted: 'fadeDisableCompleted',
         })
     ).map((scene) => {
         return {
@@ -28,6 +33,11 @@ export const readScenes = async (): Promise<SceneData[]> =>
             sortIndex: scene.sortIndex,
             enabled: scene.enabled,
             dmxData: JSON.parse(scene.dmxData),
+            useMaster: scene.useMaster,
+            master: scene.master,
+            fade: scene.fade,
+            fadeEnableCompleted: scene.fadeEnableCompleted,
+            fadeDisableCompleted: scene.fadeDisableCompleted,
         };
     });
 

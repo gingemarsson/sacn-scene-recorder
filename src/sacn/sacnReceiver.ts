@@ -11,6 +11,7 @@ const priorityTimeOutInterval = 15000;
 export const configureReceiver = (configuration: ReceiverConfiguration) => {
     const sACN = new Receiver({
         universes: configuration.universes,
+        reuseAddr: true,
     });
 
     // Create receiver metadata structure to keep track of priority

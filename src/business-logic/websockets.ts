@@ -7,6 +7,7 @@ import {
     disableScene,
     enableScene,
     removeDmxFromScene,
+    setMasterOfScene,
     storeDmxToScene,
     updateScene,
 } from './redux/scenesSlice';
@@ -70,6 +71,17 @@ const handleIncomingMessage = (store: Store<RootState>, data: string) => {
             }
             store.dispatch(disableScene(command.sceneId));
             console.log(logPrefix, 'Disable', command.sceneId);
+            break;
+
+        case 'master':
+            if (!command.sceneId) {
+                break;
+            }
+            if (!command.value) {
+                break;
+            }
+            store.dispatch(setMasterOfScene({ sceneId: command.sceneId, value: command.value }));
+            console.log(logPrefix, 'Master', command.sceneId);
             break;
 
         case 'add':

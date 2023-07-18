@@ -4,7 +4,7 @@ import { listToMap } from './utils';
 
 // Config
 //
-const sendInterval = 1000;
+const sendInterval = 50;
 
 // Sender
 //
@@ -14,6 +14,7 @@ export const configureSender = (senderConfiguration: SenderConfiguration) => {
         (universeId) =>
             new Sender({
                 universe: universeId,
+                reuseAddr: true,
             }),
     );
 
@@ -40,7 +41,7 @@ export const configureSender = (senderConfiguration: SenderConfiguration) => {
     return {
         startSending,
         stopSending,
-        sendOnce: () => send(senderConfiguration, sACNSenders)
+        sendOnce: () => send(senderConfiguration, sACNSenders),
     };
 };
 
@@ -54,5 +55,4 @@ const send = (senderConfiguration: SenderConfiguration, sACNSenders: Record<numb
             priority: senderConfiguration.priority,
         });
     });
-}
-
+};

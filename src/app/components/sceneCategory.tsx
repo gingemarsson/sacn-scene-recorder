@@ -5,6 +5,8 @@ import { SceneData, WebsocketCommand } from '@/models';
 import { FC, useState } from 'react';
 import ManageScene from './manageScene';
 import React from 'react';
+import Slider from 'rc-slider';
+import 'rc-slider/assets/index.css';
 
 type Props = {
     disabled: boolean;
@@ -75,6 +77,39 @@ const SceneCategory: FC<Props> = ({ sendCommand, scenes, categoryName, isEditing
                                             Edit
                                         </button>
                                     </div>
+                                ) : scene.useMaster ? (
+                                    <Slider
+                                        value={scene.master}
+                                        onChange={(x) => {
+                                            sendCommand({
+                                                type: 'master',
+                                                sceneId: scene.id,
+                                                value: x as number,
+                                            });
+                                            if (scene.enabled && x === 0) {
+                                                sendCommand({
+                                                    type: 'disable',
+                                                    sceneId: scene.id,
+                                                });
+                                            }
+                                            if (!scene.enabled && x !== 0) {
+                                                sendCommand({
+                                                    type: 'enable',
+                                                    sceneId: scene.id,
+                                                });
+                                            }
+                                        }}
+                                        min={0}
+                                        max={100}
+                                        railStyle={{ backgroundColor: scene.master === 0 ? '#14B8A6' : '#6366F1' }}
+                                        handleStyle={{
+                                            backgroundColor: scene.master === 0 ? '#0F766E' : '#4338CA',
+                                            opacity: 1,
+                                            border: 'none',
+                                            width: 15,
+                                            height: 15,
+                                        }}
+                                    />
                                 ) : (
                                     <button
                                         className={
@@ -121,6 +156,8 @@ const SceneCategory: FC<Props> = ({ sendCommand, scenes, categoryName, isEditing
                                     color: '#374151',
                                     category: categoryName,
                                     sortIndex: Math.max(0, ...scenes.map((x) => x.sortIndex)) + 1,
+                                    useMaster: false,
+                                    fade: 0,
                                 },
                             })
                         }

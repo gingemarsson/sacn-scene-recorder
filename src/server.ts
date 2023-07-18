@@ -16,10 +16,10 @@ const handle = app.getRequestHandler();
 
 const logPrefix = '[INFO]';
 const appName = 'sACN Scene Recorder';
-const universes = JSON.parse(process.env.NEXT_PUBLIC_UNIVERSES_JSON ?? '[1]');
-const priority = 90;
 
 app.prepare().then(async () => {
+    const universes = JSON.parse(process.env.NEXT_PUBLIC_UNIVERSES_JSON ?? '[1]');
+    const priority = parseInt(process.env.NEXT_PUBLIC_PRIO ?? '90');
     const server = express();
 
     // Load state from SQLite
@@ -45,6 +45,7 @@ app.prepare().then(async () => {
     };
     const { startSending, stopSending, sendOnce } = configureSender(senderConfiguration);
     startSending();
+    console.log(`> Sending sACN with priority ${priority}`);
 
     // Configure WebSockets
     //

@@ -24,10 +24,18 @@ export type SenderConfiguration = {
 };
 
 export type WebsocketCommand = {
-    type: 'enable' | 'disable' | 'add' | 'update' | 'delete' | 'storeDmx' | 'removeDmx';
+    type: 'enable' | 'disable' | 'add' | 'update' | 'delete' | 'storeDmx' | 'removeDmx' | 'master';
     sceneId?: string;
-    metadata?: { name: string; color: string; category: string | null; sortIndex: number };
+    metadata?: {
+        name: string;
+        color: string;
+        category: string | null;
+        sortIndex: number;
+        useMaster: boolean;
+        fade: number;
+    };
     universes?: number[];
+    value?: number;
 };
 
 export type SceneData = {
@@ -40,4 +48,9 @@ export type SceneData = {
     sortIndex: number;
     dmxData: Record<number, DmxUniverseData>;
     enabled: boolean;
+    master: number;
+    useMaster: boolean;
+    fade: number;
+    fadeEnableCompleted: number;
+    fadeDisableCompleted: number;
 };
