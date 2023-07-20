@@ -4,7 +4,7 @@ import { listToMap } from './utils';
 
 // Config
 //
-const sendInterval = 50;
+const sendInterval = 65;
 
 // Sender
 //

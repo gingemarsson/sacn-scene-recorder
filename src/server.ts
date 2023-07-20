@@ -78,7 +78,7 @@ app.prepare().then(async () => {
     server.all('/api/startSending', (_req, res) => {
         startSending();
         console.log(logPrefix, 'Start sending sACN');
-        res.send('Stopped');
+        res.send('Started');
     });
 
     server.all('/api/resetWebSockets', async (_req, res) => {
