@@ -9,7 +9,6 @@ import { ReceiverConfiguration, SenderConfiguration } from './models';
 import { configureReceiver } from './sacn/sacnReceiver';
 import { configureSender } from './sacn/sacnSender';
 
-const port = parseInt(process?.env?.PORT ?? '3000', 10);
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
@@ -18,6 +17,8 @@ const logPrefix = '[INFO]';
 const appName = 'sACN Scene Recorder';
 
 app.prepare().then(async () => {
+    const port = parseInt(process?.env?.PORT ?? '3000', 10);
+    const webSocketsPort = parseInt(process?.env?.NEXT_PUBLIC_WEBSOCKETS_PORT ?? '8080', 10);
     const universes = JSON.parse(process.env.NEXT_PUBLIC_UNIVERSES_JSON ?? '[1]');
     const priority = parseInt(process.env.NEXT_PUBLIC_PRIO ?? '90');
     const server = express();
@@ -49,7 +50,8 @@ app.prepare().then(async () => {
 
     // Configure WebSockets
     //
-    const websocketsData = configureWebsockets(store);
+    const websocketsData = configureWebsockets(store, webSocketsPort);
+    console.log(`> WebSockets listening on port ${webSocketsPort}`);
 
     observeStore(
         store,

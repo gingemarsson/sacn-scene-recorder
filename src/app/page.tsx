@@ -8,7 +8,7 @@ import SceneCategory from './components/sceneCategory';
 export default function Home() {
     const [isEditing, setIsEditing] = useState(false);
 
-    const webSocketUrl = 'ws://' + process.env.NEXT_PUBLIC_HOST + ':8080';
+    const webSocketUrl = 'ws://' + process.env.NEXT_PUBLIC_HOST + ':' + process.env.NEXT_PUBLIC_WEBSOCKETS_PORT;
     const { sendMessage, lastJsonMessage, readyState } = useWebSocket<SceneData[]>(webSocketUrl, {
         shouldReconnect: () => true,
     });

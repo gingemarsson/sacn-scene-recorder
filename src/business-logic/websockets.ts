@@ -17,8 +17,8 @@ import { WebsocketCommand } from '../models';
 
 const logPrefix = '[WS CMD]';
 
-export const configureWebsockets = (store: Store<RootState>) => {
-    const wss = new WebSocketServer({ port: 8080 });
+export const configureWebsockets = (store: Store<RootState>, port: number) => {
+    const wss = new WebSocketServer({ port });
 
     wss.on('connection', (ws) => {
         ws.on('error', console.error);
