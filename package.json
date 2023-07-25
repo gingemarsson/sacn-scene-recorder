@@ -23,6 +23,7 @@
         "eslint-config-next": "13.4.10",
         "express": "^4.18.2",
         "knex": "^2.5.1",
+        "mqtt": "^5.0.0",
         "next": "13.4.10",
         "postcss": "8.4.26",
         "rc-slider": "^10.2.1",

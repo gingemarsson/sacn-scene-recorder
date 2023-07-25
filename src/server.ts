@@ -1,5 +1,6 @@
 import express from 'express';
 import next from 'next';
+import { configureMqtt } from './business-logic/mqtt';
 import { dmxReceived } from './business-logic/redux/currentDmxSlice';
 import { getDmxDataToSendForUniverse, reloadScenes } from './business-logic/redux/scenesSlice';
 import { observeStore, store } from './business-logic/redux/store';
@@ -17,10 +18,15 @@ const logPrefix = '[INFO]';
 const appName = 'sACN Scene Recorder';
 
 app.prepare().then(async () => {
-    const port = parseInt(process?.env?.PORT ?? '3000', 10);
-    const webSocketsPort = parseInt(process?.env?.NEXT_PUBLIC_WEBSOCKETS_PORT ?? '8080', 10);
-    const universes = JSON.parse(process.env.NEXT_PUBLIC_UNIVERSES_JSON ?? '[1]');
-    const priority = parseInt(process.env.NEXT_PUBLIC_PRIO ?? '90');
+    const port: number = parseInt(process?.env?.PORT ?? '3000', 10);
+    const webSocketsPort: number = parseInt(process?.env?.NEXT_PUBLIC_WEBSOCKETS_PORT ?? '8080', 10);
+    const universes: number[] = JSON.parse(process.env.NEXT_PUBLIC_UNIVERSES_JSON ?? '[1]');
+    const priority: number = parseInt(process.env.NEXT_PUBLIC_PRIO ?? '90');
+
+    const mqttTopic: string = process.env.MQTT_TOPIC ?? '';
+    const mqttBroker: string = process.env.MQTT_BROKER ?? '';
+    const mqttSourceId: string = process.env.MQTT_SOURCE_ID ?? 'sacn-scene-recorder';
+
     const server = express();
 
     // Load state from SQLite
@@ -44,14 +50,16 @@ app.prepare().then(async () => {
         priority: priority,
         getDmxDataToSendForUniverse: (universeId: number) => getDmxDataToSendForUniverse(store.getState(), universeId),
     };
-    const { startSending, stopSending, sendOnce } = configureSender(senderConfiguration);
+    const { startSending, stopSending, sendOnce } = configureSender(senderConfiguration, () =>
+        console.log(`> sACN ready with priority ${priority} for universes ${universes.join(',')}`),
+    );
     startSending();
-    console.log(`> Sending sACN with priority ${priority}`);
 
     // Configure WebSockets
     //
-    const websocketsData = configureWebsockets(store, webSocketsPort);
-    console.log(`> WebSockets listening on port ${webSocketsPort}`);
+    const websocketsData = configureWebsockets(store, webSocketsPort, () =>
+        console.log(`> WebSockets ready on port ${webSocketsPort}`),
+    );
 
     observeStore(
         store,
@@ -61,6 +69,11 @@ app.prepare().then(async () => {
             websocketsData.broadcast(JSON.stringify(scenes), false);
             await saveScenes(scenes);
         },
+    );
+
+    // Configure MQTT
+    const mqttData = configureMqtt(store, mqttTopic, mqttBroker, mqttSourceId, () =>
+        console.log(`> MQTT ready with broker '${mqttBroker}' and topic '${mqttTopic}'`),
     );
 
     // Configure next js
@@ -97,7 +110,7 @@ app.prepare().then(async () => {
     });
 
     server.listen(port, () => {
-        console.log(`> Ready on http://localhost:${port}`);
+        console.log(`> Webserver ready on http://localhost:${port}`);
     });
 });
 

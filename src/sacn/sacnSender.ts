@@ -8,7 +8,7 @@ const sendInterval = 65;
 
 // Sender
 //
-export const configureSender = (senderConfiguration: SenderConfiguration) => {
+export const configureSender = (senderConfiguration: SenderConfiguration, onConfigured: () => void) => {
     const sACNSenders = listToMap(
         senderConfiguration.universes,
         (universeId) =>
@@ -37,6 +37,8 @@ export const configureSender = (senderConfiguration: SenderConfiguration) => {
         clearInterval(timer);
         timer = null;
     };
+
+    onConfigured();
 
     return {
         startSending,

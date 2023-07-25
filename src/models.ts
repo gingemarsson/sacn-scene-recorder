@@ -38,6 +38,16 @@ export type WebsocketCommand = {
     value?: number;
 };
 
+export type MqttCommand = {
+    'source-id': string;
+    command: 'enable' | 'disable' | 'status';
+    sceneId?: string;
+};
+export type MqttReply = {
+    'source-id': string;
+    status: any;
+};
+
 export type SceneData = {
     id: string;
     created: number;

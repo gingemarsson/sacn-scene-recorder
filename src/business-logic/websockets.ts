@@ -17,7 +17,7 @@ import { WebsocketCommand } from '../models';
 
 const logPrefix = '[WS CMD]';
 
-export const configureWebsockets = (store: Store<RootState>, port: number) => {
+export const configureWebsockets = (store: Store<RootState>, port: number, onConfigured: () => void) => {
     const wss = new WebSocketServer({ port });
 
     wss.on('connection', (ws) => {
@@ -29,6 +29,8 @@ export const configureWebsockets = (store: Store<RootState>, port: number) => {
 
         ws.send(JSON.stringify(getScenes(store.getState())));
     });
+
+    onConfigured();
 
     return {
         broadcast: (data: any, isBinary: boolean) =>
