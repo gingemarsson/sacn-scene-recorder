@@ -61,19 +61,21 @@ app.prepare().then(async () => {
         console.log(`> WebSockets ready on port ${webSocketsPort}`),
     );
 
+    // Configure MQTT
+    const mqttData = configureMqtt(store, mqttTopic, mqttBroker, mqttSourceId, () =>
+        console.log(`> MQTT ready with broker '${mqttBroker}' and topic '${mqttTopic}'`),
+    );
+
+    // Configure broadcast on scene changes.
     observeStore(
         store,
         (x) => x.scenes,
         async (scenes) => {
             sendOnce();
             websocketsData.broadcast(JSON.stringify({ scenes: scenes, sceneStatus: getSceneStatus(scenes) }), false);
+            mqttData.sendStatusWithDebounce();
             await saveScenes(scenes);
         },
-    );
-
-    // Configure MQTT
-    const mqttData = configureMqtt(store, mqttTopic, mqttBroker, mqttSourceId, () =>
-        console.log(`> MQTT ready with broker '${mqttBroker}' and topic '${mqttTopic}'`),
     );
 
     // Configure next js

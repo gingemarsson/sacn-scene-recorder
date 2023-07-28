@@ -1,4 +1,5 @@
 import { MqttCommand, MqttReply } from '@/models';
+import debounce from 'debounce';
 import { connect } from 'mqtt';
 import { Store } from 'redux';
 import {
@@ -108,4 +109,8 @@ export const configureMqtt = (
         };
         client.publish(mqttTopic, JSON.stringify(reply));
     };
+
+    // To limit MQTT spam, we use a 1s debounce here.
+    const sendStatusWithDebounce = debounce(sendStatus, 1000);
+    return { sendStatus, sendStatusWithDebounce };
 };
