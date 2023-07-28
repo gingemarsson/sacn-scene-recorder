@@ -30,6 +30,9 @@ export type WebsocketCommand = {
         name: string;
         color: string;
         category: string | null;
+        mqttToggleTopic: string;
+        mqttTogglePath: string;
+        mqttToggleValue: string;
         sortIndex: number;
         useMaster: boolean;
         fade: number;
@@ -55,6 +58,11 @@ export type SceneData = {
     name: string;
     color: string;
     category: string | null;
+
+    mqttToggleTopic: string;
+    mqttTogglePath: string;
+    mqttToggleValue: string;
+
     sortIndex: number;
     dmxData: Record<number, DmxUniverseData>;
     enabled: boolean;

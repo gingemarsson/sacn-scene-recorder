@@ -42,8 +42,16 @@ const scenesSlice = createSlice({
 
             if (scene.enabled) {
                 scenesSlice.caseReducers.disableScene(state, action);
+                scenesSlice.caseReducers.setMasterOfScene(state, {
+                    payload: { sceneId: action.payload, value: 100 },
+                    type: 'scenes/setMasterOfScene',
+                });
             } else {
                 scenesSlice.caseReducers.enableScene(state, action);
+                scenesSlice.caseReducers.setMasterOfScene(state, {
+                    payload: { sceneId: action.payload, value: 1 },
+                    type: 'scenes/setMasterOfScene',
+                });
             }
         },
         setMasterOfScene(state, action: PayloadAction<{ sceneId: string; value: number }>) {
@@ -65,6 +73,9 @@ const scenesSlice = createSlice({
                 color: action.payload.color,
                 category: action.payload.category,
                 sortIndex: action.payload.sortIndex,
+                mqttToggleTopic: '',
+                mqttTogglePath: 'event',
+                mqttToggleValue: 'button-pressed',
                 created: Date.now(),
                 updated: Date.now(),
                 dmxData: {},
@@ -86,6 +97,9 @@ const scenesSlice = createSlice({
                 name: string;
                 color: string;
                 category: string | null;
+                mqttToggleTopic: string;
+                mqttTogglePath: string;
+                mqttToggleValue: string;
                 sortIndex: number;
                 useMaster: boolean;
                 fade: number;
@@ -112,6 +126,24 @@ const scenesSlice = createSlice({
             const newCategory = action.payload.category?.trim() ?? null;
             if (newCategory === null || (newCategory !== undefined && newCategory?.length > 0)) {
                 scene.category = newCategory;
+                scene.updated = Date.now();
+            }
+
+            const newMqttToggleTopic = action.payload.mqttToggleTopic?.trim() ?? null;
+            if (newMqttToggleTopic !== undefined) {
+                scene.mqttToggleTopic = newMqttToggleTopic;
+                scene.updated = Date.now();
+            }
+
+            const newMqttTogglePath = action.payload.mqttTogglePath?.trim() ?? null;
+            if (newMqttTogglePath !== undefined) {
+                scene.mqttTogglePath = newMqttTogglePath;
+                scene.updated = Date.now();
+            }
+
+            const newMqttToggleValue = action.payload.mqttToggleValue?.trim() ?? null;
+            if (newMqttToggleValue !== undefined) {
+                scene.mqttToggleValue = newMqttToggleValue;
                 scene.updated = Date.now();
             }
 

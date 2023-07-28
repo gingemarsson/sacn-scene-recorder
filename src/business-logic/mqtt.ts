@@ -1,14 +1,21 @@
 import { MqttCommand, MqttReply } from '@/models';
 import { connect } from 'mqtt';
 import { Store } from 'redux';
-import { disableScene, enableScene, setMasterOfScene } from './redux/scenesSlice';
+import {
+    disableScene,
+    enableScene,
+    getScenes,
+    getSceneStatus,
+    setMasterOfScene,
+    toggleScene,
+} from './redux/scenesSlice';
 import { RootState } from './redux/store';
 
 const logPrefix = '[MQTT CMD]';
 
 export const configureMqtt = (
     store: Store<RootState>,
-    topic: string,
+    mqttTopic: string,
     mqttBrokerUri: string,
     sourceId: string,
     onConfigured: () => void,
@@ -16,7 +23,7 @@ export const configureMqtt = (
     let client = connect(mqttBrokerUri);
 
     client.on('connect', () => {
-        client.subscribe(topic, (err) => {
+        client.subscribe('#', (err) => {
             if (err) {
                 console.log('Mqtt error');
             } else {
@@ -26,6 +33,11 @@ export const configureMqtt = (
     });
 
     client.on('message', (topic, message) => {
+        // Ignore other topics
+        if (topic !== mqttTopic && !getScenes(store.getState()).some((s) => s.mqttToggleTopic === topic)) {
+            return;
+        }
+
         let command: MqttCommand | null | undefined;
 
         try {
@@ -45,31 +57,55 @@ export const configureMqtt = (
             return;
         }
 
-        switch (command.command) {
-            case 'status':
-                const reply: MqttReply = { status: { scenes: store.getState().scenes }, 'source-id': sourceId };
-                client.publish(topic, JSON.stringify(reply));
-                break;
-            case 'enable':
-                if (!command.sceneId) {
+        // Check if it is the main topic
+        //
+        if (topic === mqttTopic) {
+            switch (command.command) {
+                case 'status':
+                    sendStatus();
                     break;
-                }
-                store.dispatch(enableScene(command.sceneId));
-                store.dispatch(setMasterOfScene({ sceneId: command.sceneId, value: 100 }));
-                console.log(logPrefix, 'Enable', command.sceneId);
-                break;
-
-            case 'disable':
-                if (!command.sceneId) {
+                case 'enable':
+                    if (!command.sceneId) {
+                        break;
+                    }
+                    store.dispatch(enableScene(command.sceneId));
+                    store.dispatch(setMasterOfScene({ sceneId: command.sceneId, value: 100 }));
+                    sendStatus();
+                    console.log(logPrefix, 'Enable', command.sceneId);
                     break;
-                }
-                store.dispatch(disableScene(command.sceneId));
-                store.dispatch(setMasterOfScene({ sceneId: command.sceneId, value: 1 }));
-                console.log(logPrefix, 'Disable', command.sceneId);
-                break;
 
-            default:
-                console.log(logPrefix, 'Unknown command');
+                case 'disable':
+                    if (!command.sceneId) {
+                        break;
+                    }
+                    store.dispatch(disableScene(command.sceneId));
+                    store.dispatch(setMasterOfScene({ sceneId: command.sceneId, value: 1 }));
+                    sendStatus();
+                    console.log(logPrefix, 'Disable', command.sceneId);
+                    break;
+
+                default:
+                    console.log(logPrefix, 'Unknown command');
+            }
+
+            return;
         }
+
+        // Check if topic is configured on any scene
+        //
+        getScenes(store.getState()).forEach((scene) => {
+            if (topic === scene.mqttToggleTopic && (command as any)[scene.mqttTogglePath] === scene.mqttToggleValue) {
+                store.dispatch(toggleScene(scene.id));
+                sendStatus();
+            }
+        });
     });
+
+    const sendStatus = () => {
+        const reply: MqttReply = {
+            status: { sceneStatus: getSceneStatus(getScenes(store.getState())) },
+            'source-id': sourceId,
+        };
+        client.publish(mqttTopic, JSON.stringify(reply));
+    };
 };

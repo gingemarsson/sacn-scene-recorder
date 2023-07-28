@@ -102,6 +102,59 @@ const ManageScene: FC<Props> = ({ disabled, sceneToEdit, setSceneToEdit, sendCom
                             }
                         />
                     </div>
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-3 mb-4">
+                        <div>
+                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="mqttToggleTopic">
+                                MQTT Topic
+                            </label>
+                            <input
+                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm"
+                                type="text"
+                                id="mqttToggleTopic"
+                                placeholder="..."
+                                value={sceneToEdit.mqttToggleTopic}
+                                onChange={(e) =>
+                                    setSceneToEdit((x) =>
+                                        x === null ? null : { ...x, mqttToggleTopic: e.target.value ?? '' },
+                                    )
+                                }
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="mqttTogglePath">
+                                MQTT Path
+                            </label>
+                            <input
+                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm"
+                                type="text"
+                                id="mqttTogglePath"
+                                placeholder="event"
+                                value={sceneToEdit.mqttTogglePath}
+                                onChange={(e) =>
+                                    setSceneToEdit((x) =>
+                                        x === null ? null : { ...x, mqttTogglePath: e.target.value ?? '' },
+                                    )
+                                }
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="mqttToggleValue">
+                                MQTT Value
+                            </label>
+                            <input
+                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm"
+                                type="text"
+                                id="mqttToggleValue"
+                                placeholder="button-pressed"
+                                value={sceneToEdit.mqttToggleValue}
+                                onChange={(e) =>
+                                    setSceneToEdit((x) =>
+                                        x === null ? null : { ...x, mqttToggleValue: e.target.value ?? '' },
+                                    )
+                                }
+                            />
+                        </div>
+                    </div>
                     <button
                         className={
                             'text-white font-bold py-2 px-2 text-xs rounded focus:outline-none focus:shadow-outline disabled:bg-gray-700 ' +
@@ -129,6 +182,9 @@ const ManageScene: FC<Props> = ({ disabled, sceneToEdit, setSceneToEdit, sendCom
                                         name: sceneToEdit.name,
                                         color: sceneToEdit.color,
                                         category: sceneToEdit.category,
+                                        mqttToggleTopic: sceneToEdit.mqttToggleTopic,
+                                        mqttTogglePath: sceneToEdit.mqttTogglePath,
+                                        mqttToggleValue: sceneToEdit.mqttToggleValue,
                                         sortIndex: sceneToEdit.sortIndex,
                                         useMaster: sceneToEdit.useMaster,
                                         fade: sceneToEdit.fade,

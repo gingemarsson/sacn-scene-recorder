@@ -7,6 +7,11 @@ export function up(knex) {
         table.text('color').notNullable();
         table.text('category').notNullable();
         table.integer('sortIndex').notNullable();
+
+        table.text('mqttToggleTopic').notNullable();
+        table.text('mqttTogglePath').notNullable();
+        table.text('mqttToggleValue').notNullable();
+
         table.text('dmxData').notNullable();
         table.bool('enabled').notNullable();
         table.integer('master').notNullable();
