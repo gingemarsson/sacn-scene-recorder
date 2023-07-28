@@ -1,6 +1,6 @@
 ## SACN Scene Recorder
 
-💡 This webb application is used to record sACN scenes and play them back using HTP merge. Features:
+💡 This web application is used to record sACN scenes and play them back using HTP merge. Features:
 
 -   Unlimited number of scenes.
 -   Scenes can be renamed, color-coded, categorized and reordered.
