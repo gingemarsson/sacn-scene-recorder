@@ -47,11 +47,7 @@ const SceneCategory: FC<Props> = ({ sendCommand, scenes, categoryName, isEditing
                                     {getSceneChannelCount(scene) === 0 ? (
                                         <div className="relative text-xs text-gray-50 text-opacity-50">No DMX data</div>
                                     ) : (
-                                        <>
-                                            <div className="relative text-xs">
-                                                {getSceneChannelCount(scene)} channels
-                                            </div>
-                                        </>
+                                        <div className="relative text-xs">{getSceneChannelCount(scene)} channels</div>
                                     )}
                                     {scene.enabled ? (
                                         <div className="relative uppercase text-teal-400">Active</div>

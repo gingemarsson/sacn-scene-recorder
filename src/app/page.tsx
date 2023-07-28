@@ -9,7 +9,7 @@ export default function Home() {
     const [isEditing, setIsEditing] = useState(false);
 
     const webSocketUrl = 'ws://' + process.env.NEXT_PUBLIC_HOST + ':' + process.env.NEXT_PUBLIC_WEBSOCKETS_PORT;
-    const { sendMessage, lastJsonMessage, readyState } = useWebSocket<SceneData[]>(webSocketUrl, {
+    const { sendMessage, lastJsonMessage, readyState } = useWebSocket<{ scenes: SceneData[] }>(webSocketUrl, {
         shouldReconnect: () => true,
     });
     const connectionStatus = {
@@ -25,6 +25,7 @@ export default function Home() {
         sendMessage(payload);
     };
 
+    const scenes = lastJsonMessage?.scenes ?? [];
     const categories: string[] = JSON.parse(process.env.NEXT_PUBLIC_CATEGORIES_JSON ?? '[]');
 
     return (
@@ -45,17 +46,14 @@ export default function Home() {
 
             <div className="w-full max-w-6xl">
                 {categories
-                    .filter(
-                        (category) =>
-                            isEditing || (lastJsonMessage ?? []).filter((x) => x.category === category).length > 0,
-                    )
+                    .filter((category) => isEditing || scenes.filter((x) => x.category === category).length > 0)
                     .map((category, index) => (
                         <SceneCategory
                             key={index}
                             disabled={readyState !== ReadyState.OPEN}
                             isEditing={isEditing}
                             categoryName={category}
-                            scenes={(lastJsonMessage ?? []).filter((x) => x.category === category)}
+                            scenes={scenes.filter((x) => x.category === category)}
                             sendCommand={sendCommand}
                         />
                     ))}

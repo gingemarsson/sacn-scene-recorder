@@ -2,7 +2,7 @@ import express from 'express';
 import next from 'next';
 import { configureMqtt } from './business-logic/mqtt';
 import { dmxReceived } from './business-logic/redux/currentDmxSlice';
-import { getDmxDataToSendForUniverse, reloadScenes } from './business-logic/redux/scenesSlice';
+import { getDmxDataToSendForUniverse, getSceneStatus, reloadScenes } from './business-logic/redux/scenesSlice';
 import { observeStore, store } from './business-logic/redux/store';
 import { configureWebsockets } from './business-logic/websockets';
 import { readScenes, saveScenes } from './lib/database';
@@ -66,7 +66,7 @@ app.prepare().then(async () => {
         (x) => x.scenes,
         async (scenes) => {
             sendOnce();
-            websocketsData.broadcast(JSON.stringify(scenes), false);
+            websocketsData.broadcast(JSON.stringify({ scenes: scenes, sceneStatus: getSceneStatus(scenes) }), false);
             await saveScenes(scenes);
         },
     );

@@ -24,7 +24,7 @@ export type SenderConfiguration = {
 };
 
 export type WebsocketCommand = {
-    type: 'enable' | 'disable' | 'add' | 'update' | 'delete' | 'storeDmx' | 'removeDmx' | 'master';
+    type: 'enable' | 'disable' | 'toggle' | 'add' | 'update' | 'delete' | 'storeDmx' | 'removeDmx' | 'master';
     sceneId?: string;
     metadata?: {
         name: string;

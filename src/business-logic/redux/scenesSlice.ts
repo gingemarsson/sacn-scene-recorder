@@ -11,7 +11,6 @@ const scenesSlice = createSlice({
     reducers: {
         enableScene(state, action: PayloadAction<string>) {
             const scene = state.find((x) => x.id === action.payload);
-
             if (!scene) {
                 return;
             }
@@ -24,7 +23,6 @@ const scenesSlice = createSlice({
         },
         disableScene(state, action: PayloadAction<string>) {
             const scene = state.find((x) => x.id === action.payload);
-
             if (!scene) {
                 return;
             }
@@ -33,6 +31,19 @@ const scenesSlice = createSlice({
 
             if (scene.fade) {
                 scene.fadeDisableCompleted = Date.now() + scene.fade;
+            }
+        },
+        toggleScene(state, action: PayloadAction<string>) {
+            const scene = state.find((x) => x.id === action.payload);
+
+            if (!scene) {
+                return;
+            }
+
+            if (scene.enabled) {
+                scenesSlice.caseReducers.disableScene(state, action);
+            } else {
+                scenesSlice.caseReducers.enableScene(state, action);
             }
         },
         setMasterOfScene(state, action: PayloadAction<{ sceneId: string; value: number }>) {
@@ -165,6 +176,7 @@ const scenesSlice = createSlice({
 export const {
     enableScene,
     disableScene,
+    toggleScene,
     setMasterOfScene,
     addScene,
     deleteScene,
@@ -217,4 +229,10 @@ export const getDmxDataToSendForUniverse = (state: RootState, universeId: number
     );
 
     return mergedDmxData;
+};
+
+export const getSceneStatus = (scenes: SceneData[]) => {
+    const dictionary: Record<string, boolean> = {};
+    scenes.forEach((scene) => (dictionary[scene.id] = scene.enabled ? true : false));
+    return dictionary;
 };

@@ -18,7 +18,10 @@ const ManageScene: FC<Props> = ({ disabled, sceneToEdit, setSceneToEdit, sendCom
     return (
         <form className="bg-white shadow-md rounded px-6 pt-4 pb-6 mb-4 w-full">
             <div className="flex justify-between">
-                <h1 className="text-gray-900 font-semibold">Manage scene &quot;{sceneToEdit?.name}&quot;</h1>
+                <h1 className="text-gray-900 font-semibold">
+                    Manage scene &quot;{sceneToEdit?.name}&quot;{' '}
+                    <span className="text-xs font-normal text-gray-400">{sceneToEdit?.id}</span>
+                </h1>
                 <button
                     className="bg-indigo-500 hover:bg-indigo-700 disabled:bg-gray-700 text-xs text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     type="button"

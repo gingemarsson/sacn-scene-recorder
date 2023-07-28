@@ -6,9 +6,11 @@ import {
     deleteScene,
     disableScene,
     enableScene,
+    getSceneStatus,
     removeDmxFromScene,
     setMasterOfScene,
     storeDmxToScene,
+    toggleScene,
     updateScene,
 } from './redux/scenesSlice';
 import { RootState } from './redux/store';
@@ -27,7 +29,12 @@ export const configureWebsockets = (store: Store<RootState>, port: number, onCon
             handleIncomingMessage(store, data.toString());
         });
 
-        ws.send(JSON.stringify(getScenes(store.getState())));
+        ws.send(
+            JSON.stringify({
+                scenes: getScenes(store.getState()),
+                sceneStatus: getSceneStatus(getScenes(store.getState())),
+            }),
+        );
     });
 
     onConfigured();
@@ -73,6 +80,14 @@ const handleIncomingMessage = (store: Store<RootState>, data: string) => {
             }
             store.dispatch(disableScene(command.sceneId));
             console.log(logPrefix, 'Disable', command.sceneId);
+            break;
+
+        case 'toggle':
+            if (!command.sceneId) {
+                break;
+            }
+            store.dispatch(toggleScene(command.sceneId));
+            console.log(logPrefix, 'Toggle', command.sceneId);
             break;
 
         case 'master':
