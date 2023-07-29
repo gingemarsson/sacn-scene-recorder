@@ -13,9 +13,9 @@ export default function Home() {
         shouldReconnect: () => true,
     });
     const connectionStatus = {
-        [ReadyState.CONNECTING]: 'Connecting',
+        [ReadyState.CONNECTING]: 'Connecting...',
         [ReadyState.OPEN]: 'Connected ✓',
-        [ReadyState.CLOSING]: 'Closing',
+        [ReadyState.CLOSING]: 'Closing...',
         [ReadyState.CLOSED]: 'Closed',
         [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
     }[readyState];
@@ -58,11 +58,11 @@ export default function Home() {
                         />
                     ))}
 
-                {categories.length === 0 ? <p>No scene categories defined</p> : null}
+                {categories.length === 0 ? <p>No scene categories defined. Please update configuration.</p> : null}
             </div>
 
             <div className="relative flex place-items-center text-slate-50 text-opacity-50 mt-3">
-                <small>sACN Scene Recorder v0.1</small>
+                <small>sACN Scene Recorder v1.0</small>
             </div>
         </main>
     );
