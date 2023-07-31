@@ -46,7 +46,7 @@ const AddSceneButton: FC<Props> = ({ sendCommand, allScenes, categoryName, disab
     return (
         <button
             className={
-                'bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4 h-48 bg-indigo-500 hover:bg-indigo-700 disabled:bg-gray-700 text-white text-opacity-70 hover:text-opacity-100 duration-100 ' +
+                'bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4 h-52 bg-indigo-500 hover:bg-indigo-700 disabled:bg-gray-700 text-white text-opacity-70 hover:text-opacity-100 duration-100 ' +
                 (collectedProps.hovered ? 'translate-x-2' : '')
             }
             disabled={disabled}
