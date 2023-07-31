@@ -42,16 +42,8 @@ const scenesSlice = createSlice({
 
             if (scene.enabled) {
                 scenesSlice.caseReducers.disableScene(state, action);
-                scenesSlice.caseReducers.setMasterOfScene(state, {
-                    payload: { sceneId: action.payload, value: 100 },
-                    type: 'scenes/setMasterOfScene',
-                });
             } else {
                 scenesSlice.caseReducers.enableScene(state, action);
-                scenesSlice.caseReducers.setMasterOfScene(state, {
-                    payload: { sceneId: action.payload, value: 1 },
-                    type: 'scenes/setMasterOfScene',
-                });
             }
         },
         setMasterOfScene(state, action: PayloadAction<{ sceneId: string; value: number }>) {
@@ -63,10 +55,7 @@ const scenesSlice = createSlice({
 
             scene.master = action.payload.value;
         },
-        addScene(
-            state,
-            action: PayloadAction<{ name: string; color: string; category: string; sortIndex: number }>,
-        ) {
+        addScene(state, action: PayloadAction<{ name: string; color: string; category: string; sortIndex: number }>) {
             state.push({
                 id: webcrypto.randomUUID(),
                 name: action.payload.name,

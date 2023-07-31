@@ -70,7 +70,6 @@ export const configureMqtt = (
                         break;
                     }
                     store.dispatch(enableScene(command.sceneId));
-                    store.dispatch(setMasterOfScene({ sceneId: command.sceneId, value: 100 }));
                     sendStatus();
                     console.log(logPrefix, 'Enable', command.sceneId);
                     break;
@@ -80,7 +79,6 @@ export const configureMqtt = (
                         break;
                     }
                     store.dispatch(disableScene(command.sceneId));
-                    store.dispatch(setMasterOfScene({ sceneId: command.sceneId, value: 1 }));
                     sendStatus();
                     console.log(logPrefix, 'Disable', command.sceneId);
                     break;

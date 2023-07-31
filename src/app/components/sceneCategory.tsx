@@ -2,7 +2,7 @@
 
 import { sortIndexSortFn } from '@/lib/utils';
 import { SceneData, WebsocketCommand } from '@/models';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import ManageScene from './manageScene';
 import React from 'react';
 import 'rc-slider/assets/index.css';
@@ -18,15 +18,26 @@ type Props = {
 };
 
 const SceneCategory: FC<Props> = ({ sendCommand, allScenes, categoryName, isEditing, disabled }: Props) => {
+    var [date, setDate] = useState(Date.now());
     const [sceneToEdit, setSceneToEdit] = useState<SceneData | null>(null);
 
+    useEffect(() => {
+        var timer = setInterval(() => setDate(Date.now()), 100);
+        return function cleanup() {
+            clearInterval(timer);
+        };
+    });
+
     const scenes = allScenes.filter((x) => x.category === categoryName);
+    const isFading = (scene: SceneData) => date < scene.fadeEnableCompleted || date < scene.fadeDisableCompleted;
 
     return (
         <div className="relative flex flex-col mt-8">
             <div className="flex justify-start items-baseline gap-3">
                 <h1 className="relative flex-none mb-3 text-2xl font-semibold">{categoryName}</h1>
-                {scenes.some((x) => x.enabled) ? <div className="relative uppercase text-teal-400">Active</div> : null}
+                {scenes.some((x) => x.enabled || isFading(x)) ? (
+                    <div className="relative uppercase text-teal-400">Active</div>
+                ) : null}
             </div>
             <div className="grid grid-cols-1 gap-4 grid-flow-row-dense md:grid-cols-3 lg:grid-cols-5">
                 {scenes.sort(sortIndexSortFn).map((scene) => (

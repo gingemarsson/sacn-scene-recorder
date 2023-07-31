@@ -32,7 +32,7 @@ export default function Home() {
 
     return (
         <main className="flex min-h-screen flex-col items-center justify-between p-8 md:p-16">
-            <div className="z-10 w-full max-w-6xl items-center font-mono text-sm md:flex items-baseline">
+            <div className="z-10 w-full max-w-7xl items-center font-mono text-sm md:flex items-baseline">
                 <p className="text-2xl mb-2 flex-grow">sACN Scene Recorder</p>
                 <p className="mb-2 mr-3">Status: {connectionStatus}</p>
                 <div className="text-right">
@@ -47,7 +47,7 @@ export default function Home() {
             </div>
 
             <DndProvider backend={HTML5Backend}>
-                <div className="w-full max-w-6xl">
+                <div className="w-full max-w-7xl">
                     {categories
                         .filter((category) => isEditing || scenes.filter((x) => x.category === category).length > 0)
                         .map((category, index) => (

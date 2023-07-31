@@ -94,7 +94,7 @@ const handleIncomingMessage = (store: Store<RootState>, data: string) => {
             if (!command.sceneId) {
                 break;
             }
-            if (!command.value) {
+            if (command.value === undefined || command.value === null) {
                 break;
             }
             store.dispatch(setMasterOfScene({ sceneId: command.sceneId, value: command.value }));
