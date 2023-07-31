@@ -228,7 +228,7 @@ export const getDmxDataToSendForUniverse = (state: RootState, universeId: number
             const fadeDisableDimmer =
                 scene.fade && scene.fadeDisableCompleted > now ? (scene.fadeDisableCompleted - now) / scene.fade : 0;
             const fadeDimmer = scene.fade
-                ? scene.fadeEnableCompleted > scene.fadeDisableCompleted
+                ? scene.fadeEnableCompleted >= scene.fadeDisableCompleted
                     ? Math.max(fadeEnableDimmer, fadeDisableDimmer)
                     : Math.min(fadeEnableDimmer, fadeDisableDimmer)
                 : 1;
