@@ -129,19 +129,19 @@ const scenesSlice = createSlice({
                 scene.updated = Date.now();
             }
 
-            const newMqttToggleTopic = action.payload.mqttToggleTopic?.trim() ?? null;
+            const newMqttToggleTopic = action.payload.mqttToggleTopic?.trim();
             if (newMqttToggleTopic !== undefined) {
                 scene.mqttToggleTopic = newMqttToggleTopic;
                 scene.updated = Date.now();
             }
 
-            const newMqttTogglePath = action.payload.mqttTogglePath?.trim() ?? null;
+            const newMqttTogglePath = action.payload.mqttTogglePath?.trim();
             if (newMqttTogglePath !== undefined) {
                 scene.mqttTogglePath = newMqttTogglePath;
                 scene.updated = Date.now();
             }
 
-            const newMqttToggleValue = action.payload.mqttToggleValue?.trim() ?? null;
+            const newMqttToggleValue = action.payload.mqttToggleValue?.trim();
             if (newMqttToggleValue !== undefined) {
                 scene.mqttToggleValue = newMqttToggleValue;
                 scene.updated = Date.now();

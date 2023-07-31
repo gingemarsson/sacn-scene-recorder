@@ -26,19 +26,21 @@ export type SenderConfiguration = {
 export type WebsocketCommand = {
     type: 'enable' | 'disable' | 'toggle' | 'add' | 'update' | 'delete' | 'storeDmx' | 'removeDmx' | 'master';
     sceneId?: string;
-    metadata?: {
-        name: string;
-        color: string;
-        category: string | null;
-        mqttToggleTopic: string;
-        mqttTogglePath: string;
-        mqttToggleValue: string;
-        sortIndex: number;
-        useMaster: boolean;
-        fade: number;
-    };
+    metadata?: Partial<WebsocketCommandMetadata>;
     universes?: number[];
     value?: number;
+};
+
+export type WebsocketCommandMetadata = {
+    name: string;
+    color: string;
+    category: string | null;
+    mqttToggleTopic: string;
+    mqttTogglePath: string;
+    mqttToggleValue: string;
+    sortIndex: number;
+    useMaster: boolean;
+    fade: number;
 };
 
 export type MqttCommand = {

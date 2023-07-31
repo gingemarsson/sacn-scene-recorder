@@ -1,5 +1,3 @@
-'use client';
-
 import { SceneData, WebsocketCommand } from '@/models';
 import { FC, useState } from 'react';
 import { SliderPicker } from 'react-color';
@@ -65,23 +63,6 @@ const ManageScene: FC<Props> = ({ disabled, sceneToEdit, setSceneToEdit, sendCom
                             color={sceneToEdit.color}
                             onChange={(color) =>
                                 setSceneToEdit((x) => (x === null ? null : { ...x, color: color.hex }))
-                            }
-                        />
-                    </div>
-                    <div className="mb-4">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="sortIndex">
-                            SortIndex
-                        </label>
-                        <input
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm"
-                            type="number"
-                            id="sortIndex"
-                            placeholder="0"
-                            value={sceneToEdit.sortIndex}
-                            onChange={(e) =>
-                                setSceneToEdit((x) =>
-                                    x === null ? null : { ...x, sortIndex: parseInt(e.target.value ?? '') },
-                                )
                             }
                         />
                     </div>
@@ -185,7 +166,6 @@ const ManageScene: FC<Props> = ({ disabled, sceneToEdit, setSceneToEdit, sendCom
                                         mqttToggleTopic: sceneToEdit.mqttToggleTopic,
                                         mqttTogglePath: sceneToEdit.mqttTogglePath,
                                         mqttToggleValue: sceneToEdit.mqttToggleValue,
-                                        sortIndex: sceneToEdit.sortIndex,
                                         useMaster: sceneToEdit.useMaster,
                                         fade: sceneToEdit.fade,
                                     },

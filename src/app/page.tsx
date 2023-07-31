@@ -2,6 +2,8 @@
 
 import { SceneData, WebsocketCommand } from '@/models';
 import { useState } from 'react';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import SceneCategory from './components/sceneCategory';
 
@@ -44,22 +46,24 @@ export default function Home() {
                 </div>
             </div>
 
-            <div className="w-full max-w-6xl">
-                {categories
-                    .filter((category) => isEditing || scenes.filter((x) => x.category === category).length > 0)
-                    .map((category, index) => (
-                        <SceneCategory
-                            key={index}
-                            disabled={readyState !== ReadyState.OPEN}
-                            isEditing={isEditing}
-                            categoryName={category}
-                            scenes={scenes.filter((x) => x.category === category)}
-                            sendCommand={sendCommand}
-                        />
-                    ))}
+            <DndProvider backend={HTML5Backend}>
+                <div className="w-full max-w-6xl">
+                    {categories
+                        .filter((category) => isEditing || scenes.filter((x) => x.category === category).length > 0)
+                        .map((category, index) => (
+                            <SceneCategory
+                                key={index}
+                                disabled={readyState !== ReadyState.OPEN}
+                                isEditing={isEditing}
+                                categoryName={category}
+                                allScenes={scenes}
+                                sendCommand={sendCommand}
+                            />
+                        ))}
 
-                {categories.length === 0 ? <p>No scene categories defined. Please update configuration.</p> : null}
-            </div>
+                    {categories.length === 0 ? <p>No scene categories defined. Please update configuration.</p> : null}
+                </div>
+            </DndProvider>
 
             <div className="relative flex place-items-center text-slate-50 text-opacity-50 mt-3">
                 <small>sACN Scene Recorder v1.0</small>
