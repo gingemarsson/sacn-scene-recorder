@@ -29,7 +29,7 @@ const AddSceneButton: FC<Props> = ({ sendCommand, allScenes, categoryName, disab
                 sendCommand({
                     type: 'update',
                     sceneId: sceneToMove.id,
-                    metadata: {
+                    updateData: {
                         category: categoryName,
                         sortIndex: nextSortIndex,
                     },
@@ -54,7 +54,7 @@ const AddSceneButton: FC<Props> = ({ sendCommand, allScenes, categoryName, disab
             onClick={() =>
                 sendCommand({
                     type: 'add',
-                    metadata: {
+                    addData: {
                         name: 'New scene',
                         color: '#374151',
                         category: categoryName,

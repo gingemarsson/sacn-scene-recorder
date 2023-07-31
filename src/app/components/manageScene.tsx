@@ -193,7 +193,7 @@ const ManageScene: FC<Props> = ({ disabled, sceneToEdit, setSceneToEdit, sendCom
                                 sendCommand({
                                     type: 'update',
                                     sceneId: sceneToEdit.id,
-                                    metadata: {
+                                    updateData: {
                                         name: sceneToEdit.name,
                                         color: sceneToEdit.color,
                                         category: sceneToEdit.category,

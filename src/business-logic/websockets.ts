@@ -102,10 +102,10 @@ const handleIncomingMessage = (store: Store<RootState>, data: string) => {
             break;
 
         case 'add':
-            if (!command.metadata) {
+            if (!command.addData) {
                 break;
             }
-            store.dispatch(addScene(command.metadata));
+            store.dispatch(addScene(command.addData));
             console.log(logPrefix, 'Add');
             break;
 
@@ -121,10 +121,10 @@ const handleIncomingMessage = (store: Store<RootState>, data: string) => {
             if (!command.sceneId) {
                 break;
             }
-            if (!command.metadata) {
+            if (!command.updateData) {
                 break;
             }
-            store.dispatch(updateScene({ id: command.sceneId, ...command.metadata }));
+            store.dispatch(updateScene({ id: command.sceneId, ...command.updateData }));
             console.log(logPrefix, 'Update', command.sceneId);
             break;
 

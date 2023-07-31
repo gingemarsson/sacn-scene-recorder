@@ -65,7 +65,7 @@ const scenesSlice = createSlice({
         },
         addScene(
             state,
-            action: PayloadAction<{ name: string; color: string; category: string | null; sortIndex: number }>,
+            action: PayloadAction<{ name: string; color: string; category: string; sortIndex: number }>,
         ) {
             state.push({
                 id: webcrypto.randomUUID(),

@@ -76,7 +76,7 @@ const SceneCard: FC<Props> = ({
                     sendCommand({
                         type: 'update',
                         sceneId: x.id,
-                        metadata: {
+                        updateData: {
                             category: x.category,
                             sortIndex: x.sortIndex,
                         },
