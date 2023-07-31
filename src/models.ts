@@ -39,6 +39,9 @@ export type WebsocketCommandMetadata = {
     mqttToggleTopic?: string | null;
     mqttTogglePath?: string;
     mqttToggleValue?: string;
+    sinusWaveScale: number | null;
+    sinusWavePeriod: number;
+    sinusWaveOffset: number;
     sortIndex: number;
     useMaster?: boolean;
     fade?: number;
@@ -65,6 +68,10 @@ export type SceneData = {
     mqttToggleTopic: string | null;
     mqttTogglePath: string;
     mqttToggleValue: string;
+
+    sinusWaveScale: number | null;
+    sinusWavePeriod: number;
+    sinusWaveOffset: number;
 
     sortIndex: number;
     dmxData: Record<number, DmxUniverseData>;

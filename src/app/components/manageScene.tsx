@@ -66,24 +66,24 @@ const ManageScene: FC<Props> = ({ disabled, sceneToEdit, setSceneToEdit, sendCom
                             }
                         />
                     </div>
+                    <div className="mb-4">
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="fade">
+                            Fade time in ms
+                        </label>
+                        <input
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm"
+                            type="number"
+                            id="fade"
+                            placeholder="0"
+                            value={sceneToEdit.fade}
+                            onChange={(e) =>
+                                setSceneToEdit((x) =>
+                                    x === null ? null : { ...x, fade: parseInt(e.target.value ?? '') },
+                                )
+                            }
+                        />
+                    </div>
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-3 mb-4">
-                        <div>
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="fade">
-                                Fade time in ms
-                            </label>
-                            <input
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm"
-                                type="number"
-                                id="fade"
-                                placeholder="0"
-                                value={sceneToEdit.fade}
-                                onChange={(e) =>
-                                    setSceneToEdit((x) =>
-                                        x === null ? null : { ...x, fade: parseInt(e.target.value ?? '') },
-                                    )
-                                }
-                            />
-                        </div>
                         <div>
                             <label className="block text-gray-700 text-sm font-bold mb-2">Master fader</label>
                             <button
@@ -129,7 +129,33 @@ const ManageScene: FC<Props> = ({ disabled, sceneToEdit, setSceneToEdit, sendCom
                                 {sceneToEdit.mqttToggleTopic !== null ? '✓ Enabled' : 'Disabled'}
                             </button>
                         </div>
+                        <div>
+                            <label className="block text-gray-700 text-sm font-bold mb-2">Sinus Wave Effect</label>
+                            <button
+                                className={
+                                    'text-white font-bold py-2 px-2 text-xs rounded focus:outline-none focus:shadow-outline disabled:bg-gray-700 w-full ' +
+                                    (sceneToEdit.sinusWaveScale !== null
+                                        ? 'bg-teal-500 hover:bg-teal-700'
+                                        : 'bg-indigo-500 hover:bg-indigo-700')
+                                }
+                                type="button"
+                                onClick={() => {
+                                    setSceneToEdit((x) =>
+                                        x === null
+                                            ? null
+                                            : {
+                                                  ...x,
+                                                  sinusWaveScale: sceneToEdit.sinusWaveScale === null ? 0 : null,
+                                              },
+                                    );
+                                }}
+                                disabled={disabled}
+                            >
+                                {sceneToEdit.sinusWaveScale !== null ? '✓ Enabled' : 'Disabled'}
+                            </button>
+                        </div>
                     </div>
+
                     {sceneToEdit.mqttToggleTopic !== null ? (
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-3 mb-4">
                             <div>
@@ -185,6 +211,69 @@ const ManageScene: FC<Props> = ({ disabled, sceneToEdit, setSceneToEdit, sendCom
                             </div>
                         </div>
                     ) : null}
+
+                    {sceneToEdit.sinusWaveScale !== null ? (
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-3 mb-4">
+                            <div>
+                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="sinusWaveScale">
+                                    Sinus Wave Scale
+                                </label>
+                                <input
+                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm"
+                                    type="number"
+                                    id="sinusWaveScale"
+                                    placeholder="1"
+                                    value={sceneToEdit.sinusWaveScale}
+                                    onChange={(e) =>
+                                        setSceneToEdit((x) =>
+                                            x === null
+                                                ? null
+                                                : { ...x, sinusWaveScale: parseInt(e.target.value) ?? '' },
+                                        )
+                                    }
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="sinusWavePeriod">
+                                    Sinus Wave Period (ms)
+                                </label>
+                                <input
+                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm"
+                                    type="number"
+                                    id="sinusWavePeriod"
+                                    placeholder=""
+                                    value={sceneToEdit.sinusWavePeriod}
+                                    onChange={(e) =>
+                                        setSceneToEdit((x) =>
+                                            x === null
+                                                ? null
+                                                : { ...x, sinusWavePeriod: parseInt(e.target.value) ?? '' },
+                                        )
+                                    }
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="sinusWaveOffset">
+                                    Sinus Wave Offset (ms)
+                                </label>
+                                <input
+                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm"
+                                    type="number"
+                                    id="sinusWaveOffset"
+                                    placeholder="1000"
+                                    value={sceneToEdit.sinusWaveOffset}
+                                    onChange={(e) =>
+                                        setSceneToEdit((x) =>
+                                            x === null
+                                                ? null
+                                                : { ...x, sinusWaveOffset: parseInt(e.target.value) ?? '' },
+                                        )
+                                    }
+                                />
+                            </div>
+                        </div>
+                    ) : null}
+
                     <div className="flex items-center justify-end">
                         <button
                             className="bg-indigo-500 hover:bg-indigo-700 disabled:bg-gray-700 text-xs text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
@@ -200,6 +289,9 @@ const ManageScene: FC<Props> = ({ disabled, sceneToEdit, setSceneToEdit, sendCom
                                         mqttToggleTopic: sceneToEdit.mqttToggleTopic,
                                         mqttTogglePath: sceneToEdit.mqttTogglePath,
                                         mqttToggleValue: sceneToEdit.mqttToggleValue,
+                                        sinusWaveScale: sceneToEdit.sinusWaveScale,
+                                        sinusWavePeriod: sceneToEdit.sinusWavePeriod,
+                                        sinusWaveOffset: sceneToEdit.sinusWaveOffset,
                                         useMaster: sceneToEdit.useMaster,
                                         fade: sceneToEdit.fade,
                                     },

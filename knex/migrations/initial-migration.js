@@ -12,6 +12,10 @@ export function up(knex) {
         table.text('mqttTogglePath').notNullable();
         table.text('mqttToggleValue').notNullable();
 
+        table.integer('sinusWaveScale');
+        table.integer('sinusWavePeriod').notNullable();
+        table.integer('sinusWaveOffset').notNullable();
+
         table.text('dmxData').notNullable();
         table.bool('enabled').notNullable();
         table.integer('master').notNullable();

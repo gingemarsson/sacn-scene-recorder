@@ -65,6 +65,9 @@ const scenesSlice = createSlice({
                 mqttToggleTopic: null,
                 mqttTogglePath: 'event',
                 mqttToggleValue: 'button-pressed',
+                sinusWaveScale: null,
+                sinusWaveOffset: 0,
+                sinusWavePeriod: 10000,
                 created: Date.now(),
                 updated: Date.now(),
                 dmxData: {},
@@ -89,6 +92,9 @@ const scenesSlice = createSlice({
                 mqttToggleTopic?: string | null;
                 mqttTogglePath?: string;
                 mqttToggleValue?: string;
+                sinusWaveScale?: number | null;
+                sinusWaveOffset?: number;
+                sinusWavePeriod?: number;
                 sortIndex?: number;
                 useMaster?: boolean;
                 fade?: number;
@@ -118,7 +124,8 @@ const scenesSlice = createSlice({
                 scene.updated = Date.now();
             }
 
-            const newMqttToggleTopic = action.payload.mqttToggleTopic === null ? null : action.payload.mqttToggleTopic?.trim() ?? '';
+            const newMqttToggleTopic =
+                action.payload.mqttToggleTopic === null ? null : action.payload.mqttToggleTopic?.trim() ?? '';
             if (newMqttToggleTopic !== undefined) {
                 scene.mqttToggleTopic = newMqttToggleTopic;
                 scene.updated = Date.now();
@@ -139,6 +146,24 @@ const scenesSlice = createSlice({
             const newSortIndex = action.payload.sortIndex;
             if (newSortIndex !== undefined && newSortIndex !== null) {
                 scene.sortIndex = newSortIndex;
+                scene.updated = Date.now();
+            }
+
+            const newSinusWaveScale = action.payload.sinusWaveScale;
+            if (newSinusWaveScale !== undefined) {
+                scene.sinusWaveScale = newSinusWaveScale;
+                scene.updated = Date.now();
+            }
+
+            const newSinusWaveOffset = action.payload.sinusWaveOffset;
+            if (newSinusWaveOffset !== undefined && newSinusWaveOffset !== null) {
+                scene.sinusWaveOffset = newSinusWaveOffset;
+                scene.updated = Date.now();
+            }
+
+            const newSinusWavePeriod = action.payload.sinusWavePeriod;
+            if (newSinusWavePeriod !== undefined && newSinusWavePeriod !== null) {
+                scene.sinusWavePeriod = newSinusWavePeriod;
                 scene.updated = Date.now();
             }
 
@@ -233,8 +258,27 @@ export const getDmxDataToSendForUniverse = (state: RootState, universeId: number
                     : Math.min(fadeEnableDimmer, fadeDisableDimmer)
                 : 1;
 
+            const randomNumberFromAddress = (x: number) =>
+                Math.abs(Math.sin(x) * 10000 - Math.floor(Math.sin(x) * 10000));
+
             for (const address in dmxData) {
-                const value = dmxData[address] * masterDimmer * fadeDimmer;
+                // Effect dimmer
+                const effectDimmer =
+                    scene.sinusWavePeriod && scene.sinusWaveScale
+                        ? 1 -
+                          (((Math.sin(
+                              (now +
+                                  (scene.sinusWaveOffset === -1
+                                      ? randomNumberFromAddress(parseInt(address) + scene.created) * scene.sinusWavePeriod
+                                      : scene.sinusWaveOffset)) *
+                                  ((Math.PI * 2) / scene.sinusWavePeriod),
+                          ) +
+                              1) /
+                              2) *
+                              scene.sinusWaveScale) /
+                              100
+                        : 1;
+                const value = dmxData[address] * masterDimmer * fadeDimmer * effectDimmer;
 
                 // Merge scenes with HTP
                 if (merged[address] && merged[address] > value) {
