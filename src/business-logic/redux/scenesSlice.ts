@@ -73,7 +73,7 @@ const scenesSlice = createSlice({
                 color: action.payload.color,
                 category: action.payload.category,
                 sortIndex: action.payload.sortIndex,
-                mqttToggleTopic: '',
+                mqttToggleTopic: null,
                 mqttTogglePath: 'event',
                 mqttToggleValue: 'button-pressed',
                 created: Date.now(),
@@ -94,15 +94,15 @@ const scenesSlice = createSlice({
             state,
             action: PayloadAction<{
                 id: string;
-                name: string;
-                color: string;
-                category: string | null;
-                mqttToggleTopic: string;
-                mqttTogglePath: string;
-                mqttToggleValue: string;
-                sortIndex: number;
-                useMaster: boolean;
-                fade: number;
+                name?: string;
+                color?: string;
+                category?: string | null;
+                mqttToggleTopic?: string | null;
+                mqttTogglePath?: string;
+                mqttToggleValue?: string;
+                sortIndex?: number;
+                useMaster?: boolean;
+                fade?: number;
             }>,
         ) {
             const scene = state.find((x) => x.id === action.payload.id);
@@ -123,8 +123,8 @@ const scenesSlice = createSlice({
                 scene.updated = Date.now();
             }
 
-            const newCategory = action.payload.category?.trim() ?? null;
-            if (newCategory === null || (newCategory !== undefined && newCategory?.length > 0)) {
+            const newCategory = action.payload.category?.trim();
+            if (newCategory && newCategory.length > 0) {
                 scene.category = newCategory;
                 scene.updated = Date.now();
             }
@@ -136,13 +136,13 @@ const scenesSlice = createSlice({
             }
 
             const newMqttTogglePath = action.payload.mqttTogglePath?.trim();
-            if (newMqttTogglePath !== undefined) {
+            if (newMqttTogglePath) {
                 scene.mqttTogglePath = newMqttTogglePath;
                 scene.updated = Date.now();
             }
 
             const newMqttToggleValue = action.payload.mqttToggleValue?.trim();
-            if (newMqttToggleValue !== undefined) {
+            if (newMqttToggleValue) {
                 scene.mqttToggleValue = newMqttToggleValue;
                 scene.updated = Date.now();
             }

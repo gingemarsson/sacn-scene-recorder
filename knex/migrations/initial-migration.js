@@ -8,7 +8,7 @@ export function up(knex) {
         table.text('category').notNullable();
         table.integer('sortIndex').notNullable();
 
-        table.text('mqttToggleTopic').notNullable();
+        table.text('mqttToggleTopic');
         table.text('mqttTogglePath').notNullable();
         table.text('mqttToggleValue').notNullable();
 

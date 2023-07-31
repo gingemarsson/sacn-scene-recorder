@@ -66,91 +66,125 @@ const ManageScene: FC<Props> = ({ disabled, sceneToEdit, setSceneToEdit, sendCom
                             }
                         />
                     </div>
-                    <div className="mb-4">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="fade">
-                            Fade time in ms
-                        </label>
-                        <input
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm"
-                            type="number"
-                            id="fade"
-                            placeholder="0"
-                            value={sceneToEdit.fade}
-                            onChange={(e) =>
-                                setSceneToEdit((x) =>
-                                    x === null ? null : { ...x, fade: parseInt(e.target.value ?? '') },
-                                )
-                            }
-                        />
-                    </div>
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-3 mb-4">
                         <div>
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="mqttToggleTopic">
-                                MQTT Topic
+                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="fade">
+                                Fade time in ms
                             </label>
                             <input
                                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm"
-                                type="text"
-                                id="mqttToggleTopic"
-                                placeholder="..."
-                                value={sceneToEdit.mqttToggleTopic}
+                                type="number"
+                                id="fade"
+                                placeholder="0"
+                                value={sceneToEdit.fade}
                                 onChange={(e) =>
                                     setSceneToEdit((x) =>
-                                        x === null ? null : { ...x, mqttToggleTopic: e.target.value ?? '' },
+                                        x === null ? null : { ...x, fade: parseInt(e.target.value ?? '') },
                                     )
                                 }
                             />
                         </div>
                         <div>
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="mqttTogglePath">
-                                MQTT Path
-                            </label>
-                            <input
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm"
-                                type="text"
-                                id="mqttTogglePath"
-                                placeholder="event"
-                                value={sceneToEdit.mqttTogglePath}
-                                onChange={(e) =>
-                                    setSceneToEdit((x) =>
-                                        x === null ? null : { ...x, mqttTogglePath: e.target.value ?? '' },
-                                    )
+                            <label className="block text-gray-700 text-sm font-bold mb-2">Master fader</label>
+                            <button
+                                className={
+                                    'text-white font-bold py-2 px-2 text-xs rounded focus:outline-none focus:shadow-outline disabled:bg-gray-700 w-full ' +
+                                    (sceneToEdit.useMaster
+                                        ? 'bg-teal-500 hover:bg-teal-700'
+                                        : 'bg-indigo-500 hover:bg-indigo-700')
                                 }
-                            />
+                                type="button"
+                                onClick={() => {
+                                    setSceneToEdit((x) =>
+                                        x === null ? null : { ...x, useMaster: !sceneToEdit.useMaster },
+                                    );
+                                }}
+                                disabled={disabled}
+                            >
+                                {sceneToEdit.useMaster ? '✓ Enabled' : 'Disabled'}
+                            </button>
                         </div>
                         <div>
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="mqttToggleValue">
-                                MQTT Value
-                            </label>
-                            <input
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm"
-                                type="text"
-                                id="mqttToggleValue"
-                                placeholder="button-pressed"
-                                value={sceneToEdit.mqttToggleValue}
-                                onChange={(e) =>
-                                    setSceneToEdit((x) =>
-                                        x === null ? null : { ...x, mqttToggleValue: e.target.value ?? '' },
-                                    )
+                            <label className="block text-gray-700 text-sm font-bold mb-2">MQTT Control</label>
+                            <button
+                                className={
+                                    'text-white font-bold py-2 px-2 text-xs rounded focus:outline-none focus:shadow-outline disabled:bg-gray-700 w-full ' +
+                                    (sceneToEdit.mqttToggleTopic !== null
+                                        ? 'bg-teal-500 hover:bg-teal-700'
+                                        : 'bg-indigo-500 hover:bg-indigo-700')
                                 }
-                            />
+                                type="button"
+                                onClick={() => {
+                                    setSceneToEdit((x) =>
+                                        x === null
+                                            ? null
+                                            : {
+                                                  ...x,
+                                                  mqttToggleTopic: sceneToEdit.mqttToggleTopic === null ? '' : null,
+                                              },
+                                    );
+                                }}
+                                disabled={disabled}
+                            >
+                                {sceneToEdit.mqttToggleTopic !== null ? '✓ Enabled' : 'Disabled'}
+                            </button>
                         </div>
                     </div>
-                    <button
-                        className={
-                            'text-white font-bold py-2 px-2 text-xs rounded focus:outline-none focus:shadow-outline disabled:bg-gray-700 ' +
-                            (sceneToEdit.useMaster
-                                ? 'bg-teal-500 hover:bg-teal-700'
-                                : 'bg-indigo-500 hover:bg-indigo-700')
-                        }
-                        type="button"
-                        onClick={() => {
-                            setSceneToEdit((x) => (x === null ? null : { ...x, useMaster: !sceneToEdit.useMaster }));
-                        }}
-                        disabled={disabled}
-                    >
-                        Show master fader
-                    </button>
+                    {sceneToEdit.mqttToggleTopic !== null ? (
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-3 mb-4">
+                            <div>
+                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="mqttToggleTopic">
+                                    MQTT Topic
+                                </label>
+                                <input
+                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm"
+                                    type="text"
+                                    id="mqttToggleTopic"
+                                    placeholder="..."
+                                    value={sceneToEdit.mqttToggleTopic}
+                                    onChange={(e) =>
+                                        setSceneToEdit((x) =>
+                                            x === null ? null : { ...x, mqttToggleTopic: e.target.value ?? '' },
+                                        )
+                                    }
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="mqttTogglePath">
+                                    MQTT Path
+                                </label>
+                                <input
+                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm"
+                                    type="text"
+                                    id="mqttTogglePath"
+                                    placeholder="event"
+                                    value={sceneToEdit.mqttTogglePath}
+                                    onChange={(e) =>
+                                        setSceneToEdit((x) =>
+                                            x === null ? null : { ...x, mqttTogglePath: e.target.value ?? '' },
+                                        )
+                                    }
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="mqttToggleValue">
+                                    MQTT Value
+                                </label>
+                                <input
+                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm"
+                                    type="text"
+                                    id="mqttToggleValue"
+                                    placeholder="button-pressed"
+                                    value={sceneToEdit.mqttToggleValue}
+                                    onChange={(e) =>
+                                        setSceneToEdit((x) =>
+                                            x === null ? null : { ...x, mqttToggleValue: e.target.value ?? '' },
+                                        )
+                                    }
+                                />
+                            </div>
+                        </div>
+                    ) : null}
                     <div className="flex items-center justify-end">
                         <button
                             className="bg-indigo-500 hover:bg-indigo-700 disabled:bg-gray-700 text-xs text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"

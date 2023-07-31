@@ -5,6 +5,7 @@ import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import { useDrag, useDrop } from 'react-dnd';
 import { sortIndexSortFn } from '@/lib/utils';
+import { FaStopwatch, FaGear, FaRss } from 'react-icons/fa6';
 
 type Props = {
     disabled: boolean;
@@ -103,11 +104,20 @@ const SceneCard: FC<Props> = ({
             <div className="flex flex-col justify-between h-full" ref={isEditing ? drag : null}>
                 <div onClick={() => console.log(scene)}>
                     <h1 className="relative w-full flex-none mb-1 text-l font-semibold line-clamp-2">{scene.name}</h1>
-                    {getSceneChannelCount(scene) === 0 ? (
-                        <div className="relative text-xs text-gray-50 text-opacity-50">No DMX data</div>
-                    ) : (
-                        <div className="relative text-xs">{getSceneChannelCount(scene)} channels</div>
-                    )}
+                    <div className="relative text-xs flex gap-1 mb-1 items-baseline">
+                        {getSceneChannelCount(scene) === 0 ? (
+                            <div className="text-gray-50 text-opacity-50">No DMX data</div>
+                        ) : (
+                            <div>{getSceneChannelCount(scene)} channels</div>
+                        )}
+                        {isEditing ? (
+                            <div className="flex gap-1">
+                                {scene.fade > 0 ? <FaStopwatch title="Fade enabled" /> : null}
+                                {scene.useMaster ? <FaGear title="Master fader enabled" /> : null}
+                                {scene.mqttToggleTopic !== null ? <FaRss title="MQTT Control enabled" /> : null}
+                            </div>
+                        ) : null}
+                    </div>
                     {scene.enabled ? <div className="relative uppercase text-teal-400">Active</div> : null}
                 </div>
                 {isEditing ? (

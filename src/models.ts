@@ -35,7 +35,7 @@ export type WebsocketCommandMetadata = {
     name: string;
     color: string;
     category: string | null;
-    mqttToggleTopic: string;
+    mqttToggleTopic: string | null;
     mqttTogglePath: string;
     mqttToggleValue: string;
     sortIndex: number;
@@ -61,7 +61,7 @@ export type SceneData = {
     color: string;
     category: string | null;
 
-    mqttToggleTopic: string;
+    mqttToggleTopic: string | null;
     mqttTogglePath: string;
     mqttToggleValue: string;
 

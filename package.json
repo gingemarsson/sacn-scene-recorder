@@ -33,6 +33,7 @@
         "react-dnd": "^16.0.1",
         "react-dnd-html5-backend": "^16.0.1",
         "react-dom": "18.2.0",
+        "react-icons": "^4.10.1",
         "react-use-websocket": "^4.3.1",
         "redux": "^4.2.1",
         "sacn": "^4.3.0",
