@@ -6,6 +6,7 @@ import 'rc-slider/assets/index.css';
 import { useDrag, useDrop } from 'react-dnd';
 import { sortIndexSortFn } from '@/lib/utils';
 import { FaStopwatch, FaGear, FaRss, FaCircleNotch } from 'react-icons/fa6';
+import { NodeNextRequest } from 'next/dist/server/base-http/node';
 
 type Props = {
     disabled: boolean;
@@ -175,9 +176,10 @@ const SceneCard: FC<Props> = ({
                                 trackStyle={{ backgroundColor: '#14B8A6' }}
                                 railStyle={{ backgroundColor: '#6366F1' }}
                                 handleStyle={{
-                                    backgroundColor: '#4338CA',
+                                    backgroundColor: '#F9FAFB',
                                     opacity: 1,
                                     border: 'none',
+                                    boxShadow: 'none',
                                     width: 15,
                                     height: 15,
                                 }}
