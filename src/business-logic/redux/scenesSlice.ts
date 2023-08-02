@@ -118,7 +118,7 @@ const scenesSlice = createSlice({
                 scene.updated = Date.now();
             }
 
-            const newMqttToggleTopic = action.payload.mqttToggleTopic === null ? null : action.payload.mqttToggleTopic?.trim() ?? '';
+            const newMqttToggleTopic = action.payload.mqttToggleTopic === null ? null : action.payload.mqttToggleTopic?.trim();
             if (newMqttToggleTopic !== undefined) {
                 scene.mqttToggleTopic = newMqttToggleTopic;
                 scene.updated = Date.now();
