@@ -134,7 +134,8 @@ const SceneCard: FC<Props> = ({
                         {scene.enabled || isFading ? (
                             <div
                                 className={
-                                    'relative uppercase ' + ((scene.useMaster && scene.master === 0) ? 'text-gray-500' : 'text-teal-400')
+                                    'relative uppercase ' +
+                                    (scene.useMaster && scene.master === 0 ? 'text-gray-500' : 'text-teal-400')
                                 }
                             >
                                 Active

@@ -18,10 +18,15 @@ export const configureMqtt = (
     store: Store<RootState>,
     mqttTopic: string,
     mqttBrokerUri: string,
+    mqttBrokerUser: string | undefined,
+    mqttBrokerPassword: string | undefined,
     sourceId: string,
     onConfigured: () => void,
 ) => {
-    let client = connect(mqttBrokerUri);
+    let client = connect(mqttBrokerUri, {
+        username: mqttBrokerUser,
+        password: mqttBrokerPassword,
+    });
 
     client.on('connect', () => {
         client.subscribe('#', (err) => {

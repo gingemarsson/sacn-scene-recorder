@@ -24,7 +24,9 @@ app.prepare().then(async () => {
     const priority: number = parseInt(process.env.NEXT_PUBLIC_PRIO ?? '90');
 
     const mqttTopic: string = process.env.MQTT_TOPIC ?? '';
-    const mqttBroker: string = process.env.MQTT_BROKER ?? '';
+    const mqttBrokerUri: string = process.env.MQTT_BROKER ?? '';
+    const mqttBrokerUser: string | undefined = process.env.MQTT_BROKER_USER ?? undefined;
+    const mqttBrokerPassword: string | undefined = process.env.MQTT_BROKER_PASSWORD ?? undefined;
     const mqttSourceId: string = process.env.MQTT_SOURCE_ID ?? 'sacn-scene-recorder';
 
     const server = express();
@@ -62,8 +64,14 @@ app.prepare().then(async () => {
     );
 
     // Configure MQTT
-    const mqttData = configureMqtt(store, mqttTopic, mqttBroker, mqttSourceId, () =>
-        console.log(`> MQTT ready with broker '${mqttBroker}' and topic '${mqttTopic}'`),
+    const mqttData = configureMqtt(
+        store,
+        mqttTopic,
+        mqttBrokerUri,
+        mqttBrokerUser,
+        mqttBrokerPassword,
+        mqttSourceId,
+        () => console.log(`> MQTT ready with broker '${mqttBrokerUri}' and topic '${mqttTopic}'`),
     );
 
     // Configure broadcast on scene changes.

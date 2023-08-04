@@ -52,5 +52,7 @@ NEXT_PUBLIC_WEBSOCKETS_PORT=[Websockets Port as number, for example 8000]
 
 MQTT_TOPIC=[MQTT Topic for this service, optional]
 MQTT_BROKER=[MQTT broker url including mqtt protocol, optional]
+MQTT_BROKER_USER=[MQTT broker username, optional]
+MQTT_BROKER_PASSWORD=[MQTT broker password, optional]
 MQTT_SOURCE_ID=[MQTT source id for use in messages, optional]
 ```
