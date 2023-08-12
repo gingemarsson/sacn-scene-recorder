@@ -13,14 +13,14 @@ yarn install
 
 # Check/fix config files
 echo -n "Checking for file '.env.local'... "
-if [ ! -f .env.local ] ; then
+if [ -f .env.local ] ; then
     echo "ok"
 else
     echo "failed"
     exit 1
 fi
 echo -n "Checking for file 'scenes.sqlite3'... "
-if [ ! -f scenes.sqlite3 ] ; then
+if [ -f scenes.sqlite3 ] ; then
     echo "ok"
 else
     echo "failed, will create a new database from template"
