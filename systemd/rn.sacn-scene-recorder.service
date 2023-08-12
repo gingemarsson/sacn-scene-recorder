@@ -5,8 +5,8 @@ Requires=networking.service
 
 [Service]
 Type=simple
-#User=scenklocka
-#Group=scenklocka
+#User=sacn-scene-recorder
+#Group=sacn-scene-recorder
 ExecStart=/usr/local/bin/sacn-scene-recorder
 StandardInput=tty-force
 StandardError=journal
