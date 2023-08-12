@@ -26,6 +26,7 @@ else
     echo "failed, will create a new database from template"
 fi
 yarn migrate
+yarn build
 
 # Run post-install tasks
 sudo ./install_post.sh
