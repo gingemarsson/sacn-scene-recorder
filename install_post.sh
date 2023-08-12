@@ -8,6 +8,7 @@ systemctl stop rn.sacn-scene-recorder.service
 echo "Removing old files..."
 rm -v /usr/local/bin/sacn-scene-recorder
 rm -r /usr/local/share/sacn-scene-recorder
+echo "removed '/usr/local/share/sacn-scene-recorder'"
 rm -v /lib/systemd/system/rn.sacn-scene-recorder.service
 
 # Copy files
