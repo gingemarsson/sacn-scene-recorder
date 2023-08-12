@@ -1,0 +1,17 @@
+[Unit]
+Description=Scenklocka
+After=network.service
+Requires=network.service
+
+[Service]
+Type=simple
+#User=scenklocka
+#Group=scenklocka
+ExecStart=/usr/local/bin/sacn-scene-recorder
+StandardInput=tty-force
+StandardError=journal
+StandardOutput=journal
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
