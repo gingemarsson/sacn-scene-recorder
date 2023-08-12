@@ -1,0 +1,17 @@
+[Unit]
+Description=sACN Scene Recorder
+After=networking.service
+Requires=networking.service
+
+[Service]
+Type=simple
+#User=sacn-scene-recorder
+#Group=sacn-scene-recorder
+ExecStart=/usr/local/bin/sacn-scene-recorder
+StandardInput=tty-force
+StandardError=journal
+StandardOutput=journal
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
