@@ -12,14 +12,14 @@ sudo ./install_pre.sh
 yarn install
 
 # Check/fix config files
-echo -n "Checking for file \'.env.local\'... "
+echo -n "Checking for file '.env.local'... "
 if [ ! -f .env.local ] ; then
     echo "ok"
 else
     echo "failed"
     exit 1
 fi
-echo -n "Checking for file \'scenes.sqlite3\'... "
+echo -n "Checking for file 'scenes.sqlite3'... "
 if [ ! -f scenes.sqlite3 ] ; then
     echo "ok"
 else
