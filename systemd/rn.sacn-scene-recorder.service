@@ -1,5 +1,5 @@
 [Unit]
-Description=Scenklocka
+Description=sACN Scene Recorder
 After=networking.service
 Requires=networking.service
 
