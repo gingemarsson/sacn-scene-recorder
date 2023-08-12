@@ -1,7 +1,7 @@
 [Unit]
 Description=Scenklocka
-After=network.service
-Requires=network.service
+After=networking.service
+Requires=networking.service
 
 [Service]
 Type=simple
