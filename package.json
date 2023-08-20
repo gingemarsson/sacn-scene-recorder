@@ -9,7 +9,8 @@
         "dev-no-server": "next dev",
         "lint": "next lint",
         "format": "prettier -w .",
-        "migrate": "knex --esm migrate:latest"
+        "migrate": "knex --esm migrate:latest",
+        "migrate:down": "knex --esm migrate:down"
     },
     "dependencies": {
         "@reduxjs/toolkit": "^1.9.5",

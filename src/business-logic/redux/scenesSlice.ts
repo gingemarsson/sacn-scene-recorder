@@ -2,6 +2,7 @@ import { DmxUniverseState, SceneData } from '@/models';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from './store';
 import { webcrypto } from 'crypto';
+import { shuffleArray } from '../../lib/utils';
 
 const initialState: SceneData[] = [];
 
@@ -68,6 +69,7 @@ const scenesSlice = createSlice({
                 created: Date.now(),
                 updated: Date.now(),
                 dmxData: {},
+                effectBpm: null,
                 enabled: false,
                 master: 0,
                 useMaster: false,
@@ -92,6 +94,7 @@ const scenesSlice = createSlice({
                 sortIndex?: number;
                 useMaster?: boolean;
                 fade?: number;
+                effectBpm?: number | null;
             }>,
         ) {
             const scene = state.find((x) => x.id === action.payload.id);
@@ -154,6 +157,12 @@ const scenesSlice = createSlice({
                 scene.fade = newFade;
                 scene.updated = Date.now();
             }
+
+            const newEffectBpm = action.payload.effectBpm;
+            if (newEffectBpm !== undefined) {
+                scene.effectBpm = newEffectBpm;
+                scene.updated = Date.now();
+            }
         },
         storeDmxToScene(state, action: PayloadAction<{ id: string; dmx: DmxUniverseState[] }>) {
             const scene = state.find((x) => x.id === action.payload.id);
@@ -212,6 +221,40 @@ export default scenesSlice.reducer;
 
 export const getScenes = (state: RootState) => state.scenes;
 
+const getPhaseForChannel = (scene: SceneData, universeId: number, channelId: number) => {
+    const channels = Object.keys(scene.dmxData)
+        .flatMap((universe) =>
+            Object.keys(scene.dmxData[parseInt(universe)]).map((channel) => ({
+                universeId: parseInt(universe),
+                channelId: parseInt(channel),
+                dmxValue: scene.dmxData[parseInt(universe)][parseInt(channel)],
+            })),
+        )
+        .filter((x) => x.dmxValue > 0);
+
+    // We use a fixed seed of 1000 to make the shuffle deterministic
+    const shuffledChannels = shuffleArray(channels, 1000);
+
+    return shuffledChannels.findIndex((x) => x.universeId == universeId && x.channelId === channelId) / channels.length;
+    
+};
+
+const getEffectDimmer = (scene: SceneData, universeId: number, channelId: number) => {
+    if (scene.effectBpm === null) {
+        return 1;
+    }
+
+    const now = Date.now();
+    const bpm = scene.effectBpm;
+    const phase = getPhaseForChannel(scene, universeId, channelId);
+    const effectPeriod = 60000 / bpm;
+    const effectOffset = phase * effectPeriod;
+
+    const effectDimmer = Math.sin((now + effectOffset) * bpm * Math.PI * 2 / (60 * 1000)) / 2 + 0.5;
+
+    return effectDimmer;
+};
+
 export const getDmxDataToSendForUniverse = (state: RootState, universeId: number) => {
     const now = Date.now();
 
@@ -234,15 +277,16 @@ export const getDmxDataToSendForUniverse = (state: RootState, universeId: number
                     : Math.min(fadeEnableDimmer, fadeDisableDimmer)
                 : 1;
 
-            for (const address in dmxData) {
-                const value = dmxData[address] * masterDimmer * fadeDimmer;
+            for (const channelId in dmxData) {
+                const effectDimmer = getEffectDimmer(scene, universeId, parseInt(channelId));
+                const value = dmxData[channelId] * masterDimmer * fadeDimmer * effectDimmer;
 
                 // Merge scenes with HTP
-                if (merged[address] && merged[address] > value) {
+                if (merged[channelId] && merged[channelId] > value) {
                     continue;
                 }
 
-                merged[address] = value;
+                merged[channelId] = value;
             }
 
             return merged;

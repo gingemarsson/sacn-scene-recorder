@@ -66,7 +66,7 @@ const ManageScene: FC<Props> = ({ disabled, sceneToEdit, setSceneToEdit, sendCom
                             }
                         />
                     </div>
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-3 mb-4">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-4 mb-4">
                         <div>
                             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="fade">
                                 Fade time in ms
@@ -105,6 +105,31 @@ const ManageScene: FC<Props> = ({ disabled, sceneToEdit, setSceneToEdit, sendCom
                             </button>
                         </div>
                         <div>
+                            <label className="block text-gray-700 text-sm font-bold mb-2">Sinus effect</label>
+                            <button
+                                className={
+                                    'text-white font-bold py-2 px-2 text-xs rounded focus:outline-none focus:shadow-outline disabled:bg-gray-700 w-full ' +
+                                    (sceneToEdit.effectBpm !== null
+                                        ? 'bg-teal-500 hover:bg-teal-700'
+                                        : 'bg-indigo-500 hover:bg-indigo-700')
+                                }
+                                type="button"
+                                onClick={() => {
+                                    setSceneToEdit((x) =>
+                                        x === null
+                                            ? null
+                                            : {
+                                                  ...x,
+                                                  effectBpm: sceneToEdit.effectBpm === null ? 0 : null,
+                                              },
+                                    );
+                                }}
+                                disabled={disabled}
+                            >
+                                {sceneToEdit.effectBpm !== null ? '✓ Enabled' : 'Disabled'}
+                            </button>
+                        </div>
+                        <div>
                             <label className="block text-gray-700 text-sm font-bold mb-2">MQTT Control</label>
                             <button
                                 className={
@@ -130,6 +155,25 @@ const ManageScene: FC<Props> = ({ disabled, sceneToEdit, setSceneToEdit, sendCom
                             </button>
                         </div>
                     </div>
+                    {sceneToEdit.effectBpm !== null ? (
+                        <div className="mb-4">
+                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="effectBpm">
+                                Effect BPM
+                            </label>
+                            <input
+                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm"
+                                type="number"
+                                id="effectBpm"
+                                placeholder="0"
+                                value={sceneToEdit.effectBpm}
+                                onChange={(e) =>
+                                    setSceneToEdit((x) =>
+                                        x === null ? null : { ...x, effectBpm: parseInt(e.target.value ?? '') },
+                                    )
+                                }
+                            />
+                        </div>
+                    ) : null}
                     {sceneToEdit.mqttToggleTopic !== null ? (
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-3 mb-4">
                             <div>
@@ -202,6 +246,7 @@ const ManageScene: FC<Props> = ({ disabled, sceneToEdit, setSceneToEdit, sendCom
                                         mqttToggleValue: sceneToEdit.mqttToggleValue,
                                         useMaster: sceneToEdit.useMaster,
                                         fade: sceneToEdit.fade,
+                                        effectBpm: sceneToEdit.effectBpm,
                                     },
                                 })
                             }

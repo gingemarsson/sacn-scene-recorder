@@ -6,6 +6,7 @@
 -   Scenes can be renamed, color-coded, categorized and reordered.
 -   Faders can be enabled on a per-scene basis.
 -   Per-scene fade time.
+-   Sinus wave generator with shuffled offsets for each channel.
 -   Multiple universes.
 -   Control via Website UI, WebSockets or MQTT. BitFocus companion (including feedback) is supported via WebSockets.
 

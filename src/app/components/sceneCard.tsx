@@ -5,8 +5,7 @@ import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import { useDrag, useDrop } from 'react-dnd';
 import { sortIndexSortFn } from '@/lib/utils';
-import { FaStopwatch, FaGear, FaRss, FaCircleNotch } from 'react-icons/fa6';
-import { NodeNextRequest } from 'next/dist/server/base-http/node';
+import { FaStopwatch, FaGear, FaRss, FaCircleNotch, FaWaveSquare } from 'react-icons/fa6';
 
 type Props = {
     disabled: boolean;
@@ -126,6 +125,7 @@ const SceneCard: FC<Props> = ({
                             <div className="flex gap-1">
                                 {scene.fade > 0 ? <FaStopwatch title="Fade enabled" /> : null}
                                 {scene.useMaster ? <FaGear title="Master fader enabled" /> : null}
+                                {scene.effectBpm !== null ? <FaWaveSquare title="Effect enabled" /> : null}
                                 {scene.mqttToggleTopic !== null ? <FaRss title="MQTT Control enabled" /> : null}
                             </div>
                         ) : null}

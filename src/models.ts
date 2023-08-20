@@ -42,6 +42,7 @@ export type WebsocketCommandMetadata = {
     sortIndex: number;
     useMaster?: boolean;
     fade?: number;
+    effectBpm?: number | null;
 };
 
 export type MqttCommand = {
@@ -68,6 +69,7 @@ export type SceneData = {
 
     sortIndex: number;
     dmxData: Record<number, DmxUniverseData>;
+    effectBpm: number | null;
     enabled: boolean;
     master: number;
     useMaster: boolean;
