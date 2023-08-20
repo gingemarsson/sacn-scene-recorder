@@ -1,6 +1,7 @@
 import { SceneData } from '@/models.js';
 import Knex from 'knex';
 import knexConfiguration from './knexConfiguration.js';
+import debounce from 'debounce';
 
 const knex = Knex<Record<string, unknown>[], Record<string, unknown>[]>(knexConfiguration.production);
 
@@ -65,3 +66,6 @@ export const saveScenes = async (scenes: SceneData[]) => {
             .catch(trx.rollback);
     });
 };
+
+// To limit disk access, we use a 1s debounce here.
+export const saveScenesWithDecounce = debounce(saveScenes, 1000);

@@ -5,7 +5,7 @@ import { dmxReceived } from './business-logic/redux/currentDmxSlice';
 import { getDmxDataToSendForUniverse, getSceneStatus, reloadScenes } from './business-logic/redux/scenesSlice';
 import { observeStore, store } from './business-logic/redux/store';
 import { configureWebsockets } from './business-logic/websockets';
-import { readScenes, saveScenes } from './lib/database';
+import { readScenes, saveScenesWithDecounce } from './lib/database';
 import { ReceiverConfiguration, SenderConfiguration } from './models';
 import { configureReceiver } from './sacn/sacnReceiver';
 import { configureSender } from './sacn/sacnSender';
@@ -82,7 +82,7 @@ app.prepare().then(async () => {
             sendOnce();
             websocketsData.broadcast(JSON.stringify({ scenes: scenes, sceneStatus: getSceneStatus(scenes) }), false);
             mqttData.sendStatusWithDebounce();
-            await saveScenes(scenes);
+            await saveScenesWithDecounce(scenes);
         },
     );
 
