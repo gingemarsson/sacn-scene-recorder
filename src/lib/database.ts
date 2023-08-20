@@ -19,6 +19,7 @@ export const readScenes = async (): Promise<SceneData[]> =>
             sortIndex: 'sortIndex',
             enabled: 'enabled',
             dmxData: 'dmxData',
+            dmxEffects: 'dmxEffects',
             useMaster: 'useMaster',
             master: 'master',
             fade: 'fade',
@@ -39,6 +40,7 @@ export const readScenes = async (): Promise<SceneData[]> =>
             sortIndex: scene.sortIndex,
             enabled: scene.enabled,
             dmxData: JSON.parse(scene.dmxData),
+            dmxEffects: JSON.parse(scene.dmxEffects),
             useMaster: scene.useMaster,
             master: scene.master,
             fade: scene.fade,
@@ -56,7 +58,13 @@ export const saveScenes = async (scenes: SceneData[]) => {
                 scenes.length > 0
                     ? knex('scene')
                           .transacting(trx)
-                          .insert(scenes.map((x) => ({ ...x, dmxData: JSON.stringify(x.dmxData) })))
+                          .insert(
+                              scenes.map((x) => ({
+                                  ...x,
+                                  dmxData: JSON.stringify(x.dmxData),
+                                  dmxEffects: JSON.stringify(x.dmxEffects),
+                              })),
+                          )
                     : null,
             )
             .then(trx.commit)

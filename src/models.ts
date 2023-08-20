@@ -42,6 +42,7 @@ export type WebsocketCommandMetadata = {
     sortIndex: number;
     useMaster?: boolean;
     fade?: number;
+    dmxEffects?: Record<number, DmxUniverseEffects>;
 };
 
 export type MqttCommand = {
@@ -52,6 +53,20 @@ export type MqttCommand = {
 export type MqttReply = {
     'source-id': string;
     status: any;
+};
+
+export type Effect = {
+    type: 'sin-wave';
+    bpm: number;
+    phase: number;
+};
+
+export type DmxUniverseEffects = Record<number, Effect>;
+
+export type EffectData = {
+    effect?: Effect;
+    universeId: number;
+    channelId: number;
 };
 
 export type SceneData = {
@@ -68,6 +83,7 @@ export type SceneData = {
 
     sortIndex: number;
     dmxData: Record<number, DmxUniverseData>;
+    dmxEffects: Record<number, DmxUniverseEffects>;
     enabled: boolean;
     master: number;
     useMaster: boolean;

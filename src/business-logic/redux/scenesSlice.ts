@@ -1,4 +1,4 @@
-import { DmxUniverseState, SceneData } from '@/models';
+import { DmxUniverseEffects as DmxUniverseEffect, DmxUniverseState, Effect, SceneData } from '@/models';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from './store';
 import { webcrypto } from 'crypto';
@@ -68,6 +68,7 @@ const scenesSlice = createSlice({
                 created: Date.now(),
                 updated: Date.now(),
                 dmxData: {},
+                dmxEffects: {},
                 enabled: false,
                 master: 0,
                 useMaster: false,
@@ -92,6 +93,7 @@ const scenesSlice = createSlice({
                 sortIndex?: number;
                 useMaster?: boolean;
                 fade?: number;
+                dmxEffects?: Record<number, DmxUniverseEffect>;
             }>,
         ) {
             const scene = state.find((x) => x.id === action.payload.id);
@@ -154,6 +156,12 @@ const scenesSlice = createSlice({
                 scene.fade = newFade;
                 scene.updated = Date.now();
             }
+
+            const newDmxEffects = action.payload.dmxEffects;
+            if (newDmxEffects !== undefined && newDmxEffects !== null) {
+                scene.dmxEffects = newDmxEffects;
+                scene.updated = Date.now();
+            }
         },
         storeDmxToScene(state, action: PayloadAction<{ id: string; dmx: DmxUniverseState[] }>) {
             const scene = state.find((x) => x.id === action.payload.id);
@@ -212,6 +220,23 @@ export default scenesSlice.reducer;
 
 export const getScenes = (state: RootState) => state.scenes;
 
+const getEffectDimmerForChannel = (effect?: Effect) => {
+    if (!effect) {
+        return 1;
+    }
+
+    if (effect.type !== 'sin-wave') {
+        return 1;
+    }
+
+    const now = Date.now();
+    const effectPeriod = 60000 / effect.bpm;
+    const effectDimmer =
+        Math.sin(((now + (effect.phase * effectPeriod) / 360) * effect.bpm * (Math.PI * 2)) / (60 * 1000)) / 2 + 0.5;
+
+    return effectDimmer;
+};
+
 export const getDmxDataToSendForUniverse = (state: RootState, universeId: number) => {
     const now = Date.now();
 
@@ -235,7 +260,11 @@ export const getDmxDataToSendForUniverse = (state: RootState, universeId: number
                 : 1;
 
             for (const address in dmxData) {
-                const value = dmxData[address] * masterDimmer * fadeDimmer;
+                const effectDimmer =
+                    scene.dmxEffects && scene.dmxEffects[universeId]
+                        ? getEffectDimmerForChannel(scene.dmxEffects[universeId][address])
+                        : 1;
+                const value = dmxData[address] * masterDimmer * fadeDimmer * effectDimmer;
 
                 // Merge scenes with HTP
                 if (merged[address] && merged[address] > value) {
