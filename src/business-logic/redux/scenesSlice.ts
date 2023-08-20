@@ -1,4 +1,4 @@
-import { DmxUniverseState, SceneData } from '@/models';
+import { DmxUniverseData, DmxUniverseState, SceneData } from '@/models';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from './store';
 import { webcrypto } from 'crypto';
@@ -56,24 +56,39 @@ const scenesSlice = createSlice({
 
             scene.master = action.payload.value;
         },
-        addScene(state, action: PayloadAction<{ name: string; color: string; category: string; sortIndex: number }>) {
+        addScene(
+            state,
+            action: PayloadAction<{
+                name: string;
+                color: string;
+                category: string;
+                mqttToggleTopic?: string | null;
+                mqttTogglePath?: string;
+                mqttToggleValue?: string;
+                sortIndex: number;
+                useMaster?: boolean;
+                fade?: number;
+                effectBpm?: number | null;
+                dmxData?: Record<number, DmxUniverseData>;
+            }>,
+        ) {
             state.push({
                 id: webcrypto.randomUUID(),
                 name: action.payload.name,
                 color: action.payload.color,
                 category: action.payload.category,
                 sortIndex: action.payload.sortIndex,
-                mqttToggleTopic: null,
-                mqttTogglePath: 'event',
-                mqttToggleValue: 'button-pressed',
+                mqttToggleTopic: action.payload.mqttToggleTopic ?? null,
+                mqttTogglePath: action.payload.mqttTogglePath ?? 'event',
+                mqttToggleValue: action.payload.mqttToggleValue ?? 'button-pressed',
                 created: Date.now(),
                 updated: Date.now(),
-                dmxData: {},
-                effectBpm: null,
+                dmxData: action.payload.dmxData ?? {},
+                effectBpm: action.payload.effectBpm ?? null,
                 enabled: false,
                 master: 0,
-                useMaster: false,
-                fade: 0,
+                useMaster: action.payload.useMaster ?? false,
+                fade: action.payload.fade ?? 0,
                 fadeEnableCompleted: 0,
                 fadeDisableCompleted: 0,
             });
@@ -87,7 +102,7 @@ const scenesSlice = createSlice({
                 id: string;
                 name?: string;
                 color?: string;
-                category?: string | null;
+                category?: string;
                 mqttToggleTopic?: string | null;
                 mqttTogglePath?: string;
                 mqttToggleValue?: string;
@@ -236,7 +251,6 @@ const getPhaseForChannel = (scene: SceneData, universeId: number, channelId: num
     const shuffledChannels = shuffleArray(channels, 1000);
 
     return shuffledChannels.findIndex((x) => x.universeId == universeId && x.channelId === channelId) / channels.length;
-    
 };
 
 const getEffectDimmer = (scene: SceneData, universeId: number, channelId: number) => {
@@ -250,7 +264,7 @@ const getEffectDimmer = (scene: SceneData, universeId: number, channelId: number
     const effectPeriod = 60000 / bpm;
     const effectOffset = phase * effectPeriod;
 
-    const effectDimmer = Math.sin((now + effectOffset) * bpm * Math.PI * 2 / (60 * 1000)) / 2 + 0.5;
+    const effectDimmer = Math.sin(((now + effectOffset) * bpm * Math.PI * 2) / (60 * 1000)) / 2 + 0.5;
 
     return effectDimmer;
 };

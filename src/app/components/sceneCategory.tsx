@@ -30,6 +30,7 @@ const SceneCategory: FC<Props> = ({ sendCommand, allScenes, categoryName, isEdit
 
     const scenes = allScenes.filter((x) => x.category === categoryName);
     const isFading = (scene: SceneData) => date < scene.fadeEnableCompleted || date < scene.fadeDisableCompleted;
+    const nextSortIndex = Math.max(0, ...scenes.map((x) => x.sortIndex)) + 1;
 
     return (
         <div className="relative flex flex-col mt-8">
@@ -56,6 +57,7 @@ const SceneCategory: FC<Props> = ({ sendCommand, allScenes, categoryName, isEdit
                                 <ManageScene
                                     disabled={disabled}
                                     sceneToEdit={sceneToEdit}
+                                    nextSortIndex={nextSortIndex}
                                     setSceneToEdit={setSceneToEdit}
                                     sendCommand={sendCommand}
                                 />
@@ -67,6 +69,7 @@ const SceneCategory: FC<Props> = ({ sendCommand, allScenes, categoryName, isEdit
                     <AddSceneButton
                         disabled={disabled}
                         isEditing={isEditing}
+                        nextSortIndex={nextSortIndex}
                         categoryName={categoryName}
                         allScenes={allScenes}
                         sendCommand={sendCommand}

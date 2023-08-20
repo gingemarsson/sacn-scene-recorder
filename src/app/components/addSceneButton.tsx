@@ -7,15 +7,15 @@ import { useDrop } from 'react-dnd';
 type Props = {
     disabled: boolean;
     isEditing: boolean;
+    nextSortIndex: number;
     categoryName: string;
     allScenes: SceneData[];
     sendCommand: (command: WebsocketCommand) => void;
 };
 
-const AddSceneButton: FC<Props> = ({ sendCommand, allScenes, categoryName, disabled }: Props) => {
+const AddSceneButton: FC<Props> = ({ sendCommand, allScenes, nextSortIndex, categoryName, disabled }: Props) => {
     const scenes = allScenes.filter((x) => x.category === categoryName);
 
-    const nextSortIndex = Math.max(0, ...scenes.map((x) => x.sortIndex)) + 1;
     const [collectedProps, drop] = useDrop(
         () => ({
             accept: 'scene',

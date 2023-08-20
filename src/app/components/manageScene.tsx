@@ -5,11 +5,12 @@ import { SliderPicker } from 'react-color';
 type Props = {
     disabled: boolean;
     sceneToEdit: SceneData;
+    nextSortIndex: number;
     setSceneToEdit: (updateFunction: (scene: SceneData | null) => SceneData | null) => void;
     sendCommand: (command: WebsocketCommand) => void;
 };
 
-const ManageScene: FC<Props> = ({ disabled, sceneToEdit, setSceneToEdit, sendCommand }: Props) => {
+const ManageScene: FC<Props> = ({ disabled, sceneToEdit, nextSortIndex, setSceneToEdit, sendCommand }: Props) => {
     const universes: number[] = JSON.parse(process.env.NEXT_PUBLIC_UNIVERSES_JSON ?? '[1]');
     const [selectedUniverses, setSelectedUniverses] = useState<number[]>(universes);
 
@@ -313,6 +314,22 @@ const ManageScene: FC<Props> = ({ disabled, sceneToEdit, setSceneToEdit, sendCom
                                 Remove DMX
                             </button>
                         </div>
+                        <button
+                            className="bg-indigo-500 hover:bg-indigo-700 disabled:bg-gray-700 text-xs text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                            type="button"
+                            onClick={() =>
+                                sendCommand({
+                                    type: 'add',
+                                    addData: {
+                                        ...sceneToEdit,
+                                        sortIndex: nextSortIndex,
+                                    },
+                                })
+                            }
+                            disabled={disabled}
+                        >
+                            Duplicate scene
+                        </button>
                         <button
                             className="bg-red-500 hover:bg-red-700 disabled:bg-gray-700 text-xs text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                             type="button"
